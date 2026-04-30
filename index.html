@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA STORE</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --card: #1a1a26;
+  --border: rgba(255,255,255,0.07);
+  --gold: #c9a96e;
+  --gold-light: #e8c98a;
+  --white: #f5f0e8;
+  --muted: #7a7a8a;
+  --accent: #e85d75;
+  --green: #4caf8a;
+  --blue: #5b8dee;
+  --radius: 16px;
+  --font: 'DM Sans', sans-serif;
+  --serif: 'Playfair Display', serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--white);overflow-x:hidden;min-height:100vh}
+button{font-family:var(--font);cursor:pointer}
+input,select,textarea{font-family:var(--font)}
+a{text-decoration:none;cursor:pointer}
+
+/* ═══════════ PAGE SYSTEM ═══════════ */
+.page{display:none;min-height:100vh;animation:fadeIn 0.4s ease both}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-16px) rotate(1deg)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:0.8}50%{transform:scale(1.1);opacity:0.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ═══════════ AUTH PAGES ═══════════ */
+.auth-page {
+  display:none; min-height:100vh;
+  background: radial-gradient(ellipse at 70% 30%, rgba(201,169,110,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(232,93,117,0.08) 0%, transparent 50%),
+              var(--bg);
+  align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+.auth-page.active{display:flex}
+
+.auth-bg-shapes{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.auth-shape{position:absolute;border-radius:50%;border:1px solid}
+.auth-shape-1{width:500px;height:500px;top:-150px;right:-150px;border-color:rgba(201,169,110,0.1);animation:pulse 8s ease-in-out infinite}
+.auth-shape-2{width:300px;height:300px;bottom:-100px;left:-100px;border-color:rgba(232,93,117,0.08);animation:pulse 10s ease-in-out infinite reverse}
+.auth-shape-3{width:200px;height:200px;top:40%;right:10%;border-color:rgba(91,141,238,0.08);animation:pulse 7s ease-in-out infinite 2s}
+
+.auth-container{
+  display:grid;grid-template-columns:1fr 1fr;
+  max-width:960px;width:100%;margin:20px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:28px;overflow:hidden;
+  box-shadow:0 40px 120px rgba(0,0,0,0.6);
+  position:relative;z-index:2;
+}
+
+.auth-visual{
+  background: linear-gradient(135deg, #1a1228 0%, #0f1a24 100%);
+  padding:60px 50px;display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+.auth-visual::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%, rgba(201,169,110,0.15) 0%, transparent 70%);
+}
+.auth-logo{font-family:var(--serif);font-size:1.8rem;font-weight:900;letter-spacing:0.2em;color:var(--gold);position:relative}
+.auth-logo span{color:var(--white)}
+.auth-tagline{font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+.auth-visual-center{text-align:center;position:relative}
+.auth-big-emoji{font-size:7rem;display:block;animation:float 5s ease-in-out infinite;line-height:1.2;margin-bottom:20px}
+.auth-visual h2{font-family:var(--serif);font-size:1.8rem;font-weight:900;line-height:1.2;margin-bottom:12px}
+.auth-visual h2 em{font-style:italic;color:var(--gold)}
+.auth-visual p{color:var(--muted);font-size:0.85rem;line-height:1.7}
+
+.auth-features{display:flex;flex-direction:column;gap:12px;position:relative}
+.auth-feature{display:flex;align-items:center;gap:12px;font-size:0.82rem;color:var(--muted)}
+.auth-feature-icon{width:32px;height:32px;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+
+.auth-form-side{padding:52px 48px;display:flex;flex-direction:column;justify-content:center}
+.auth-tabs{display:flex;gap:4px;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:36px}
+.auth-tab{flex:1;padding:10px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:0.88rem;font-weight:600;transition:all 0.3s;letter-spacing:0.02em}
+.auth-tab.active{background:var(--card);color:var(--white);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+
+.auth-form-title{font-family:var(--serif);font-size:1.7rem;font-weight:900;margin-bottom:6px}
+.auth-form-sub{color:var(--muted);font-size:0.85rem;margin-bottom:28px;line-height:1.5}
+
+.form-group{margin-bottom:18px;position:relative}
+.form-label{font-size:0.78rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+.form-input{
+  width:100%;padding:14px 16px;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:12px;color:var(--white);font-size:0.92rem;
+  transition:all 0.3s;outline:none;
+}
+.form-input::placeholder{color:rgba(122,122,138,0.5)}
+.form-input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,169,110,0.08)}
+.form-input.error{border-color:var(--accent);animation:shake 0.3s ease}
+.form-input.success{border-color:var(--green)}
+
+.input-icon{position:relative}
+.input-icon .form-input{padding-left:44px}
+.input-icon .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none}
+.password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;transition:color 0.2s}
+.password-toggle:hover{color:var(--gold)}
+
+.form-error{color:var(--accent);font-size:0.78rem;margin-top:6px;display:none;align-items:center;gap:4px}
+.form-error.show{display:flex}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.divider{display:flex;align-items:center;gap:14px;margin:20px 0;color:var(--muted);font-size:0.8rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.social-btns{display:flex;gap:10px;margin-bottom:20px}
+.social-btn{flex:1;padding:12px;border:1.5px solid var(--border);border-radius:12px;background:transparent;color:var(--white);font-size:0.85rem;font-weight:500;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.social-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,169,110,0.05)}
+
+.btn-auth{
+  width:100%;padding:15px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:#0a0a0f;font-size:0.95rem;font-weight:700;
+  letter-spacing:0.02em;transition:all 0.3s;position:relative;overflow:hidden;
+}
+.btn-auth::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,0.15));opacity:0;transition:opacity 0.3s}
+.btn-auth:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(201,169,110,0.4)}
+.btn-auth:hover::before{opacity:1}
+.btn-auth:active{transform:translateY(0)}
+.btn-auth.loading{pointer-events:none}
+.btn-auth .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(10,10,15,0.3);border-top-color:#0a0a0f;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px}
+
+.auth-footer{text-align:center;margin-top:20px;font-size:0.83rem;color:var(--muted)}
+.auth-footer a{color:var(--gold);font-weight:600}
+
+.remember-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:0.83rem;color:var(--muted);cursor:pointer}
+.checkbox-label input{width:16px;height:16px;accent-color:var(--gold)}
+.forgot-link{font-size:0.83rem;color:var(--gold);font-weight:600}
+
+.terms-text{font-size:0.75rem;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+.terms-text a{color:var(--gold)}
+
+/* OTP */
+.otp-container{display:flex;gap:10px;justify-content:center;margin:20px 0}
+.otp-input{width:52px;height:60px;text-align:center;font-size:1.5rem;font-weight:700;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;color:var(--white);transition:all 0.3s;outline:none}
+.otp-input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,169,110,0.1)}
+.otp-resend{text-align:center;font-size:0.83rem;color:var(--muted);margin-top:8px}
+.otp-resend span{color:var(--gold);font-weight:600;cursor:pointer}
+
+/* ═══════════ MAIN APP ═══════════ */
+#app-page{display:none}
+#app-page.active{display:block}
+
+/* HEADER */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 60px;height:70px;
+  background:rgba(10,10,15,0.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  animation:slideDown 0.6s ease both;
+}
+.logo{font-family:var(--serif);font-size:1.4rem;font-weight:900;letter-spacing:0.2em;color:var(--gold);cursor:pointer}
+.logo span{color:var(--white)}
+
+.header-search{flex:1;max-width:500px;margin:0 40px;position:relative}
+.search-input{width:100%;padding:10px 20px 10px 44px;background:var(--card);border:1.5px solid var(--border);border-radius:100px;color:var(--white);font-size:0.88rem;outline:none;transition:all 0.3s}
+.search-input::placeholder{color:var(--muted)}
+.search-input:focus{border-color:var(--gold);background:var(--surface)}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;pointer-events:none}
+
+.header-actions{display:flex;align-items:center;gap:16px}
+
+.cart-btn{
+  position:relative;background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:#0a0a0f;border:none;padding:9px 20px;border-radius:100px;
+  font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:7px;
+  transition:all 0.3s;
+}
+.cart-btn:hover{transform:scale(1.05);box-shadow:0 8px 24px rgba(201,169,110,0.35)}
+.cart-badge{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;font-size:0.68rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+.user-menu{position:relative}
+.user-btn{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);padding:7px 16px;border-radius:100px;color:var(--white);font-size:0.85rem;font-weight:500;transition:all 0.3s}
+.user-btn:hover{border-color:var(--gold);color:var(--gold)}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#0a0a0f}
+
+.dropdown{
+  position:absolute;top:calc(100% + 12px);right:0;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:8px;min-width:200px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  opacity:0;pointer-events:none;transform:translateY(-8px);
+  transition:all 0.3s;z-index:200;
+}
+.dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+.dropdown-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;font-size:0.85rem;color:var(--muted);transition:all 0.2s;cursor:pointer}
+.dropdown-item:hover{background:var(--card);color:var(--white)}
+.dropdown-item.danger:hover{color:var(--accent)}
+.dropdown-divider{height:1px;background:var(--border);margin:6px 0}
+
+/* MAIN CONTENT */
+.main{padding-top:70px;min-height:100vh}
+
+/* SUB-PAGES */
+.sub-page{display:none;padding:60px}
+.sub-page.active{display:block;animation:fadeIn 0.3s ease}
+
+/* ═══════════ HOME ═══════════ */
+.hero{
+  min-height:calc(100vh - 70px);
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;padding:60px;
+  position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;top:-200px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(124,92,191,0.12) 0%,transparent 70%);animation:pulse 7s ease-in-out infinite}
+.hero::after{content:'';position:absolute;bottom:-200px;left:0;width:500px;height:500px;background:radial-gradient(circle,rgba(201,169,110,0.07) 0%,transparent 70%);animation:pulse 9s ease-in-out infinite reverse}
+
+.hero-content{position:relative;z-index:2}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);color:var(--gold);padding:6px 16px;border-radius:100px;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:28px;animation:fadeUp 0.7s 0.2s both}
+.hero h1{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4.5rem);font-weight:900;line-height:1.05;margin-bottom:24px;animation:fadeUp 0.7s 0.4s both}
+.hero h1 em{font-style:italic;color:var(--gold);display:block}
+.hero p{font-size:1rem;color:var(--muted);line-height:1.7;max-width:440px;margin-bottom:40px;animation:fadeUp 0.7s 0.6s both}
+.hero-actions{display:flex;gap:14px;animation:fadeUp 0.7s 0.8s both}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;padding:14px 32px;border-radius:100px;font-size:0.92rem;font-weight:700;transition:all 0.3s}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 45px rgba(201,169,110,0.4)}
+.btn-ghost{background:transparent;color:var(--white);border:1px solid var(--border);padding:13px 28px;border-radius:100px;font-size:0.88rem;font-weight:500;transition:all 0.3s;display:flex;align-items:center;gap:8px}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.hero-visual{display:flex;align-items:center;justify-content:center;animation:fadeIn 1s 0.3s both}
+.hero-float{font-size:9rem;animation:float 5s ease-in-out infinite;text-align:center;position:relative}
+.hero-float::after{content:'BEST SELLER';position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;font-size:0.65rem;font-weight:800;letter-spacing:0.15em;padding:4px 14px;border-radius:100px;white-space:nowrap}
+
+/* STATS */
+.stats-bar{display:flex;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat{flex:1;padding:28px 40px;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-num{font-family:var(--serif);font-size:2rem;font-weight:900;color:var(--gold)}
+.stat-label{font-size:0.78rem;color:var(--muted);margin-top:2px;letter-spacing:0.05em}
+
+/* PRODUCTS */
+.products-section{padding:80px 60px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px}
+.section-title{font-family:var(--serif);font-size:2.2rem;font-weight:900;line-height:1.1}
+.section-title em{font-style:italic;color:var(--gold)}
+.section-link{color:var(--gold);font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:6px}
+
+.filters{display:flex;gap:10px;margin-bottom:36px;flex-wrap:wrap}
+.filter-btn{padding:8px 18px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:0.8rem;font-weight:500;transition:all 0.3s}
+.filter-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border-color:transparent;font-weight:700}
+.filter-btn:hover:not(.active){border-color:var(--gold);color:var(--gold)}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+
+.product-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);animation:fadeUp 0.5s ease both;position:relative}
+.product-card:hover{transform:translateY(-10px) scale(1.01);box-shadow:0 25px 70px rgba(0,0,0,0.45),0 0 0 1px rgba(201,169,110,0.2)}
+
+.product-badge{position:absolute;top:12px;left:12px;font-size:0.66rem;font-weight:800;letter-spacing:0.08em;padding:3px 10px;border-radius:100px;z-index:2;text-transform:uppercase}
+.badge-new{background:var(--green);color:#fff}
+.badge-hot{background:var(--accent);color:#fff}
+.badge-sale{background:#7c5cbf;color:#fff}
+
+.product-wish{position:absolute;top:12px;right:12px;background:rgba(10,10,15,0.7);border:1px solid var(--border);color:var(--muted);width:34px;height:34px;border-radius:50%;font-size:0.95rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;z-index:2;backdrop-filter:blur(8px)}
+.product-wish:hover,.product-wish.liked{color:var(--accent);border-color:var(--accent)}
+
+.product-img{height:190px;display:flex;align-items:center;justify-content:center;font-size:5rem;background:linear-gradient(135deg,var(--surface),var(--card));position:relative;overflow:hidden;transition:transform 0.5s}
+.product-card:hover .product-img{transform:scale(1.06)}
+.product-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--card) 0%,transparent 55%)}
+
+.product-info{padding:16px}
+.product-cat{font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.product-name{font-family:var(--serif);font-size:1.05rem;font-weight:700;margin-bottom:6px;line-height:1.3}
+.product-desc{font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.product-rating{display:flex;align-items:center;gap:6px;margin-bottom:12px;font-size:0.78rem}
+.stars{color:var(--gold)}
+.reviews{color:var(--muted)}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price-wrap{display:flex;flex-direction:column}
+.price-old{font-size:0.72rem;color:var(--muted);text-decoration:line-through}
+.price-now{font-family:var(--serif);font-size:1.15rem;font-weight:700;color:var(--gold)}
+.add-btn{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;width:40px;height:40px;border-radius:10px;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+.add-btn:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 8px 20px rgba(201,169,110,0.4)}
+.add-btn.added{background:linear-gradient(135deg,var(--green),#6ecba4)}
+
+/* FEATURED BANNER */
+.featured-banner{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:24px;margin:0 60px;padding:60px;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+  position:relative;overflow:hidden;
+}
+.featured-banner::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(201,169,110,0.08),transparent 70%);animation:pulse 6s ease-in-out infinite}
+.featured-emoji-big{font-size:10rem;text-align:center;animation:float 5s ease-in-out infinite}
+.featured-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.3);color:var(--accent);padding:5px 14px;border-radius:100px;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:18px}
+.featured-banner h2{font-family:var(--serif);font-size:2.3rem;font-weight:900;line-height:1.15;margin-bottom:14px}
+.featured-banner h2 em{font-style:italic;color:var(--gold)}
+.featured-banner p{font-size:0.88rem;color:var(--muted);line-height:1.7;margin-bottom:24px}
+.price-display{display:flex;align-items:baseline;gap:14px;margin-bottom:28px}
+.price-display .main{font-family:var(--serif);font-size:2.2rem;font-weight:900;color:var(--gold)}
+.price-display .old{font-size:1rem;color:var(--muted);text-decoration:line-through}
+.price-display .disc{background:rgba(76,175,138,0.12);color:var(--green);border:1px solid rgba(76,175,138,0.25);padding:3px 10px;border-radius:100px;font-size:0.75rem;font-weight:700}
+
+/* ═══════════ CART PANEL ═══════════ */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.4s}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-panel{position:fixed;top:0;right:0;bottom:0;width:420px;background:var(--surface);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform 0.5s cubic-bezier(0.77,0,0.175,1);display:flex;flex-direction:column}
+.cart-panel.open{transform:translateX(0)}
+.cart-head{padding:28px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-head h3{font-family:var(--serif);font-size:1.3rem;font-weight:900}
+.cart-close{background:var(--card);border:1px solid var(--border);color:var(--white);width:38px;height:38px;border-radius:50%;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.cart-close:hover{background:var(--accent);border-color:var(--accent)}
+.cart-body{flex:1;overflow-y:auto;padding:20px 32px}
+.cart-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.cart-empty .icon{font-size:4rem;margin-bottom:12px;opacity:0.4}
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);animation:fadeUp 0.3s ease}
+.ci-emoji{width:60px;height:60px;background:var(--card);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:1px solid var(--border);flex-shrink:0}
+.ci-details{flex:1}
+.ci-name{font-size:0.88rem;font-weight:600;margin-bottom:4px}
+.ci-price{color:var(--gold);font-size:0.82rem;font-weight:700}
+.ci-qty{display:flex;align-items:center;gap:8px;margin-top:8px}
+.qty-btn{background:var(--card);border:1px solid var(--border);color:var(--white);width:26px;height:26px;border-radius:6px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.qty-btn:hover{border-color:var(--gold);color:var(--gold)}
+.qty-n{font-size:0.88rem;font-weight:700;min-width:18px;text-align:center}
+.ci-remove{background:transparent;border:none;color:var(--muted);font-size:1rem;align-self:flex-start;transition:color 0.2s}
+.ci-remove:hover{color:var(--accent)}
+.cart-foot{padding:20px 32px;border-top:1px solid var(--border)}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cart-total-label{color:var(--muted);font-size:0.88rem}
+.cart-total-val{font-family:var(--serif);font-size:1.6rem;font-weight:900;color:var(--gold)}
+.checkout-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;padding:15px;border-radius:12px;font-size:0.95rem;font-weight:700;transition:all 0.3s}
+.checkout-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(201,169,110,0.4)}
+
+/* ═══════════ PROFILE PAGE ═══════════ */
+.profile-page{max-width:1000px;margin:0 auto}
+.profile-header-card{
+  background:linear-gradient(135deg,var(--surface),var(--card));
+  border:1px solid var(--border);border-radius:24px;padding:40px;
+  display:flex;align-items:center;gap:32px;margin-bottom:32px;
+  position:relative;overflow:hidden;
+}
+.profile-header-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(201,169,110,0.06),transparent 60%)}
+.profile-avatar-big{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:900;color:#0a0a0f;border:4px solid rgba(201,169,110,0.3);flex-shrink:0;position:relative}
+.profile-avatar-big .online-dot{position:absolute;bottom:4px;right:4px;width:14px;height:14px;background:var(--green);border-radius:50%;border:2px solid var(--surface)}
+.profile-info h2{font-family:var(--serif);font-size:1.6rem;font-weight:900;margin-bottom:4px}
+.profile-info .email{color:var(--muted);font-size:0.88rem;margin-bottom:12px}
+.profile-badges{display:flex;gap:8px;flex-wrap:wrap}
+.profile-badge{padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:700;letter-spacing:0.08em}
+.badge-member{background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.25);color:var(--gold)}
+.badge-verified{background:rgba(76,175,138,0.1);border:1px solid rgba(76,175,138,0.25);color:var(--green)}
+
+.profile-grid{display:grid;grid-template-columns:1fr 2fr;gap:24px}
+.profile-nav{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:12px;overflow:hidden}
+.profile-nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;font-size:0.88rem;color:var(--muted);transition:all 0.2s;cursor:pointer}
+.profile-nav-item:hover{background:var(--card);color:var(--white)}
+.profile-nav-item.active{background:linear-gradient(135deg,rgba(201,169,110,0.15),rgba(201,169,110,0.05));color:var(--gold);font-weight:600}
+.profile-nav-item .nav-icon{font-size:1.1rem;width:24px;text-align:center}
+
+.profile-content-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px}
+.profile-section-title{font-family:var(--serif);font-size:1.2rem;font-weight:900;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+
+.profile-form .form-group{margin-bottom:20px}
+.profile-form .form-input{background:var(--card)}
+.profile-form .btn-save{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;padding:12px 28px;border-radius:10px;font-size:0.88rem;font-weight:700;transition:all 0.3s}
+.profile-form .btn-save:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,169,110,0.35)}
+
+.order-list{display:flex;flex-direction:column;gap:16px}
+.order-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:all 0.2s}
+.order-item:hover{border-color:rgba(201,169,110,0.2)}
+.order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.order-id{font-size:0.8rem;color:var(--muted)}
+.order-status{font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:100px}
+.status-delivered{background:rgba(76,175,138,0.1);color:var(--green);border:1px solid rgba(76,175,138,0.25)}
+.status-processing{background:rgba(201,169,110,0.1);color:var(--gold);border:1px solid rgba(201,169,110,0.25)}
+.status-cancelled{background:rgba(232,93,117,0.1);color:var(--accent);border:1px solid rgba(232,93,117,0.25)}
+.order-items-list{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.order-emoji{width:44px;height:44px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.order-bottom{display:flex;justify-content:space-between;align-items:center}
+.order-total{font-size:0.88rem;color:var(--muted)}
+.order-total strong{color:var(--gold);font-family:var(--serif);font-size:1rem}
+.order-date{font-size:0.75rem;color:var(--muted)}
+
+.no-orders{text-align:center;padding:60px;color:var(--muted)}
+.no-orders .icon{font-size:3.5rem;margin-bottom:12px;opacity:0.4}
+
+/* WISHLIST */
+.wish-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.wish-item{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.3s;cursor:pointer}
+.wish-item:hover{border-color:rgba(201,169,110,0.3);transform:translateY(-4px)}
+.wish-img{height:110px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:var(--surface)}
+.wish-info{padding:12px}
+.wish-name{font-size:0.82rem;font-weight:600;margin-bottom:4px}
+.wish-price{color:var(--gold);font-size:0.82rem;font-weight:700}
+
+/* TOAST */
+.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid rgba(76,175,138,0.35);color:var(--white);padding:12px 24px;border-radius:100px;font-size:0.88rem;font-weight:600;z-index:500;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* FOOTER */
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:50px 60px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;margin-top:80px}
+.footer-brand .logo{font-size:1.3rem;margin-bottom:14px;display:block}
+.footer-brand p{font-size:0.82rem;color:var(--muted);line-height:1.7;max-width:260px}
+.footer-col h4{font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.footer-col a{display:block;color:var(--muted);font-size:0.82rem;margin-bottom:8px;transition:color 0.2s;cursor:pointer}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{background:var(--surface);border-top:1px solid var(--border);padding:16px 60px;display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .auth-container{grid-template-columns:1fr}
+  .auth-visual{display:none}
+  .auth-form-side{padding:36px 28px}
+  .header{padding:0 20px}
+  .header-search{display:none}
+  .hero{grid-template-columns:1fr;padding:40px 24px;min-height:auto;padding-top:80px}
+  .hero-visual{display:none}
+  .sub-page{padding:30px 20px}
+  .products-section{padding:50px 20px}
+  .featured-banner{margin:0 20px;grid-template-columns:1fr;padding:32px}
+  .featured-emoji-big{display:none}
+  .stats-bar{flex-wrap:wrap}
+  .stat{min-width:50%}
+  .profile-grid{grid-template-columns:1fr}
+  .footer{padding:36px 20px;grid-template-columns:1fr 1fr;gap:30px}
+  .footer-bottom{padding:14px 20px}
+  .cart-panel{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ AUTH: LOGIN ═══════════ -->
+<div class="auth-page active" id="page-login">
+  <div class="auth-bg-shapes">
+    <div class="auth-shape auth-shape-1"></div>
+    <div class="auth-shape auth-shape-2"></div>
+    <div class="auth-shape auth-shape-3"></div>
+  </div>
+  <div class="auth-container">
+    <div class="auth-visual">
+      <div>
+        <div class="auth-logo">NOVA<span> STORE</span></div>
+        <div class="auth-tagline">Premium Collection 2025</div>
+      </div>
+      <div class="auth-visual-center">
+        <span class="auth-big-emoji">🛍️</span>
+        <h2>Belanja <em>Lebih Mudah</em> & Menyenangkan</h2>
+        <p>Ribuan produk premium menunggumu. Masuk dan temukan penawaran terbaik hari ini.</p>
+      </div>
+      <div class="auth-features">
+        <div class="auth-feature"><div class="auth-feature-icon">🔒</div><span>Keamanan data terjamin & terenkripsi</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">🚀</div><span>Pengiriman cepat ke seluruh Indonesia</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">💎</div><span>Produk asli bergaransi resmi</span></div>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="showLoginTab('login')">Masuk</button>
+        <button class="auth-tab" onclick="showLoginTab('phone')">Nomor HP</button>
+      </div>
+
+      <!-- EMAIL LOGIN -->
+      <div id="login-email-form">
+        <div class="auth-form-title">Selamat Datang Kembali 👋</div>
+        <div class="auth-form-sub">Masuk untuk melanjutkan belanjamu</div>
+
+        <div class="social-btns">
+          <button class="social-btn" onclick="socialLogin('Google')">🌐 Google</button>
+          <button class="social-btn" onclick="socialLogin('Facebook')">📘 Facebook</button>
+        </div>
+        <div class="divider">atau masuk dengan email</div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="input-icon">
+            <span class="icon">📧</span>
+            <input type="email" class="form-input" id="login-email" placeholder="nama@email.com">
+          </div>
+          <div class="form-error" id="login-email-err">⚠️ Email tidak valid</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-icon" style="position:relative">
+            <span class="icon">🔑</span>
+            <input type="password" class="form-input" id="login-pass" placeholder="Masukkan password">
+            <button class="password-toggle" onclick="togglePass('login-pass', this)">👁️</button>
+          </div>
+          <div class="form-error" id="login-pass-err">⚠️ Password minimal 6 karakter</div>
+        </div>
+        <div class="remember-row">
+          <label class="checkbox-label"><input type="checkbox" id="remember-me"> Ingat saya</label>
+          <span class="forgot-link" onclick="showForgot()">Lupa password?</span>
+        </div>
+        <button class="btn-auth" onclick="doLogin()"><span id="login-btn-text">Masuk Sekarang</span></button>
+        <div class="auth-footer">Belum punya akun? <a onclick="goTo('page-register')">Daftar sekarang</a></div>
+      </div>
+
+      <!-- PHONE LOGIN -->
+      <div id="login-phone-form" style="display:none">
+        <div class="auth-form-title">Masuk via HP 📱</div>
+        <div class="auth-form-sub">Kami kirim kode OTP ke nomor kamu</div>
+        <div class="form-group">
+          <label class="form-label">Nomor HP</label>
+          <div class="input-icon">
+            <span class="icon">📱</span>
+            <input type="tel" class="form-input" id="login-phone" placeholder="+62 812-xxxx-xxxx">
+          </div>
+        </div>
+        <button class="btn-auth" onclick="sendOTP('login')">Kirim Kode OTP</button>
+        <div id="otp-section-login" style="display:none;margin-top:24px">
+          <div class="auth-form-sub">Masukkan 6 digit kode yang dikirim ke nomormu</div>
+          <div class="otp-container" id="otp-inputs-login"></div>
+          <div class="otp-resend">Tidak menerima kode? <span onclick="sendOTP('login')">Kirim ulang</span></div>
+          <button class="btn-auth" style="margin-top:16px" onclick="verifyOTP('login')">Verifikasi & Masuk</button>
+        </div>
+        <div class="auth-footer" style="margin-top:16px">Belum punya akun? <a onclick="goTo('page-register')">Daftar sekarang</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ AUTH: REGISTER ═══════════ -->
+<div class="auth-page" id="page-register">
+  <div class="auth-bg-shapes">
+    <div class="auth-shape auth-shape-1"></div>
+    <div class="auth-shape auth-shape-2"></div>
+  </div>
+  <div class="auth-container">
+    <div class="auth-visual">
+      <div>
+        <div class="auth-logo">NOVA<span> STORE</span></div>
+        <div class="auth-tagline">Premium Collection 2025</div>
+      </div>
+      <div class="auth-visual-center">
+        <span class="auth-big-emoji">🎉</span>
+        <h2>Bergabung & Nikmati <em>Ribuan Produk</em></h2>
+        <p>Daftar gratis dan dapatkan voucher Rp 50.000 untuk pembelian pertamamu!</p>
+      </div>
+      <div class="auth-features">
+        <div class="auth-feature"><div class="auth-feature-icon">🎁</div><span>Voucher selamat datang Rp 50.000</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">⭐</div><span>Poin reward setiap pembelian</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">🛡️</div><span>Jaminan uang kembali 30 hari</span></div>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-form-title">Buat Akun Baru ✨</div>
+      <div class="auth-form-sub">Isi data di bawah untuk mulai berbelanja</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nama Depan</label>
+          <input type="text" class="form-input" id="reg-fname" placeholder="Nama depan">
+          <div class="form-error" id="reg-fname-err">⚠️ Nama wajib diisi</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Belakang</label>
+          <input type="text" class="form-input" id="reg-lname" placeholder="Nama belakang">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <div class="input-icon">
+          <span class="icon">📧</span>
+          <input type="email" class="form-input" id="reg-email" placeholder="nama@email.com">
+        </div>
+        <div class="form-error" id="reg-email-err">⚠️ Email tidak valid</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nomor HP</label>
+        <div class="input-icon">
+          <span class="icon">📱</span>
+          <input type="tel" class="form-input" id="reg-phone" placeholder="+62 812-xxxx-xxxx">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-icon" style="position:relative">
+          <span class="icon">🔑</span>
+          <input type="password" class="form-input" id="reg-pass" placeholder="Min. 8 karakter" oninput="checkPassStrength(this.value)">
+          <button class="password-toggle" onclick="togglePass('reg-pass',this)">👁️</button>
+        </div>
+        <div class="form-error" id="reg-pass-err">⚠️ Password minimal 8 karakter</div>
+        <div id="pass-strength" style="margin-top:8px;display:none">
+          <div style="height:4px;background:var(--border);border-radius:4px;margin-bottom:4px">
+            <div id="strength-bar" style="height:100%;border-radius:4px;transition:all 0.3s;width:0%"></div>
+          </div>
+          <span id="strength-text" style="font-size:0.72rem;color:var(--muted)"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Konfirmasi Password</label>
+        <div class="input-icon">
+          <span class="icon">🔒</span>
+          <input type="password" class="form-input" id="reg-pass2" placeholder="Ulangi password">
+        </div>
+        <div class="form-error" id="reg-pass2-err">⚠️ Password tidak cocok</div>
+      </div>
+
+      <button class="btn-auth" onclick="doRegister()"><span id="reg-btn-text">Daftar Gratis</span></button>
+      <div class="terms-text">Dengan mendaftar, kamu setuju dengan <a>Syarat & Ketentuan</a> dan <a>Kebijakan Privasi</a> kami</div>
+      <div class="auth-footer">Sudah punya akun? <a onclick="goTo('page-login')">Masuk di sini</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FORGOT PASSWORD ═══════════ -->
+<div class="auth-page" id="page-forgot">
+  <div class="auth-bg-shapes"><div class="auth-shape auth-shape-1"></div></div>
+  <div class="auth-container" style="grid-template-columns:1fr;max-width:500px">
+    <div class="auth-form-side" style="padding:52px 48px">
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-size:3.5rem;margin-bottom:12px">🔐</div>
+        <div class="auth-logo" style="justify-content:center;display:flex;margin-bottom:6px">NOVA<span style="color:var(--white)">&nbsp;STORE</span></div>
+      </div>
+      <div class="auth-form-title">Lupa Password?</div>
+      <div class="auth-form-sub">Masukkan emailmu dan kami kirim link reset password</div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <div class="input-icon">
+          <span class="icon">📧</span>
+          <input type="email" class="form-input" id="forgot-email" placeholder="nama@email.com">
+        </div>
+      </div>
+      <button class="btn-auth" onclick="doForgot()">Kirim Link Reset</button>
+      <div class="auth-footer" style="margin-top:20px"><a onclick="goTo('page-login')">← Kembali ke Login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN APP ═══════════ -->
+<div id="app-page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo" onclick="setSubPage('home')">NOVA<span> STORE</span></div>
+    <div class="header-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" placeholder="Cari produk...">
+    </div>
+    <div class="header-actions">
+      <button class="cart-btn" onclick="toggleCart()">
+        🛒 Keranjang
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <div class="user-menu">
+        <button class="user-btn" onclick="toggleDropdown()">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <span id="userNameHeader">Akun</span>
+          <span>▾</span>
+        </button>
+        <div class="dropdown" id="userDropdown">
+          <div class="dropdown-item" onclick="setSubPage('profile');toggleDropdown()"><span>👤</span> Profil Saya</div>
+          <div class="dropdown-item" onclick="setSubPage('orders');toggleDropdown()"><span>📦</span> Pesanan Saya</div>
+          <div class="dropdown-item" onclick="setSubPage('wishlist');toggleDropdown()"><span>❤️</span> Wishlist</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger" onclick="doLogout()"><span>🚪</span> Keluar</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HOME -->
+    <div class="sub-page active" id="sub-home">
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-tag">✦ Koleksi Premium 2025</div>
+          <h1>Temukan <em>Gaya Terbaik</em> Kamu</h1>
+          <p>Produk berkualitas tinggi pilihan terbaik untuk mereka yang menghargai keindahan & kenyamanan.</p>
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">Lihat Koleksi</button>
+            <button class="btn-ghost">▶ Tonton Video</button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-float">✨</div>
+        </div>
+      </section>
+
+      <div class="stats-bar">
+        <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Pelanggan Puas</div></div>
+        <div class="stat"><div class="stat-num">250+</div><div class="stat-label">Produk Premium</div></div>
+        <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Tingkat Kepuasan</div></div>
+        <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Layanan Pelanggan</div></div>
+      </div>
+
+      <div class="featured-banner">
+        <div class="featured-emoji-big">👜</div>
+        <div>
+          <div class="featured-tag">🔥 Produk Pilihan</div>
+          <h2>Tas Kulit <em>Artisan</em> Edition</h2>
+          <p>Dibuat tangan oleh pengrajin berpengalaman dengan kulit asli pilihan. Setiap detail dirancang dengan presisi untuk menemani perjalanan hidupmu.</p>
+          <div class="price-display">
+            <span class="main">Rp 1.250.000</span>
+            <span class="old">Rp 1.800.000</span>
+            <span class="disc">-31%</span>
+          </div>
+          <button class="btn-primary" onclick="addToCart({id:99,emoji:'👜',name:'Tas Kulit Artisan Edition',price:1250000,category:'Aksesoris'})">Tambah ke Keranjang</button>
+        </div>
+      </div>
+
+      <section class="products-section" id="products-section">
+        <div class="section-head">
+          <div class="section-title">Koleksi <em>Terbaru</em></div>
+          <a class="section-link">Lihat semua →</a>
+        </div>
+        <div class="filters" id="filterBtns"></div>
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <div class="footer">
+        <div class="footer-brand">
+          <span class="logo">NOVA<span> STORE</span></span>
+          <p>Menghadirkan produk premium berkualitas tinggi untuk melengkapi gaya hidup modern kamu.</p>
+        </div>
+        <div class="footer-col"><h4>Toko</h4><a>Semua Produk</a><a>Promo Terkini</a><a>New Arrival</a><a>Best Seller</a></div>
+        <div class="footer-col"><h4>Bantuan</h4><a>FAQ</a><a>Cara Belanja</a><a>Retur & Refund</a><a>Lacak Pesanan</a></div>
+        <div class="footer-col"><h4>Ikuti Kami</h4><a>Instagram</a><a>TikTok</a><a>YouTube</a><a>WhatsApp</a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2025 NOVA STORE. Hak cipta dilindungi.</span><span>Dibuat dengan ❤️</span></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="sub-page" id="sub-profile">
+      <div class="profile-page">
+        <div class="profile-header-card">
+          <div class="profile-avatar-big" id="profileAvatarBig">A
+            <div class="online-dot"></div>
+          </div>
+          <div class="profile-info">
+            <h2 id="profileName">Loading...</h2>
+            <div class="email" id="profileEmail">loading@email.com</div>
+            <div class="profile-badges">
+              <span class="profile-badge badge-member">⭐ Member Premium</span>
+              <span class="profile-badge badge-verified">✓ Terverifikasi</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-grid">
+          <div class="profile-nav">
+            <div class="profile-nav-item active" onclick="showProfileTab('info',this)"><span class="nav-icon">👤</span> Info Akun</div>
+            <div class="profile-nav-item" onclick="showProfileTab('address',this)"><span class="nav-icon">📍</span> Alamat</div>
+            <div class="profile-nav-item" onclick="showProfileTab('security',this)"><span class="nav-icon">🔒</span> Keamanan</div>
+            <div class="profile-nav-item" onclick="showProfileTab('notif',this)"><span class="nav-icon">🔔</span> Notifikasi</div>
+          </div>
+          <div class="profile-content-card">
+            <!-- INFO -->
+            <div id="ptab-info">
+              <div class="profile-section-title">Informasi Akun</div>
+              <div class="profile-form">
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">Nama Depan</label><input class="form-input" id="pf-fname"></div>
+                  <div class="form-group"><label class="form-label">Nama Belakang</label><input class="form-input" id="pf-lname"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="pf-email" type="email"></div>
+                <div class="form-group"><label class="form-label">Nomor HP</label><input class="form-input" id="pf-phone"></div>
+                <div class="form-group"><label class="form-label">Tanggal Lahir</label><input class="form-input" id="pf-bday" type="date"></div>
+                <div class="form-group"><label class="form-label">Jenis Kelamin</label>
+                  <select class="form-input" id="pf-gender" style="background:var(--card)">
+                    <option value="">Pilih...</option>
+                    <option value="L">Laki-laki</option>
+                    <option value="P">Perempuan</option>
+                  </select>
+                </div>
+                <button class="btn-save" onclick="saveProfile()">💾 Simpan Perubahan</button>
+              </div>
+            </div>
+            <!-- ADDRESS -->
+            <div id="ptab-address" style="display:none">
+              <div class="profile-section-title">Alamat Pengiriman</div>
+              <div class="profile-form">
+                <div class="form-group"><label class="form-label">Nama Penerima</label><input class="form-input" id="addr-name" placeholder="Nama lengkap penerima"></div>
+                <div class="form-group"><label class="form-label">Alamat Lengkap</label><textarea class="form-input" id="addr-street" rows="3" placeholder="Jalan, nomor rumah, RT/RW..." style="resize:vertical"></textarea></div>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">Kota</label><input class="form-input" id="addr-city" placeholder="Kota"></div>
+                  <div class="form-group"><label class="form-label">Kode Pos</label><input class="form-input" id="addr-zip" placeholder="12345"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Provinsi</label><input class="form-input" id="addr-province" placeholder="Provinsi"></div>
+                <button class="btn-save" onclick="saveAddress()">💾 Simpan Alamat</button>
+              </div>
+            </div>
+            <!-- SECURITY -->
+            <div id="ptab-security" style="display:none">
+              <div class="profile-section-title">Keamanan Akun</div>
+              <div class="profile-form">
+                <div class="form-group"><label class="form-label">Password Lama</label><input class="form-input" type="password" id="sec-old" placeholder="Password saat ini"></div>
+                <div class="form-group"><label class="form-label">Password Baru</label><input class="form-input" type="password" id="sec-new" placeholder="Min. 8 karakter"></div>
+                <div class="form-group"><label class="form-label">Konfirmasi Password</label><input class="form-input" type="password" id="sec-confirm" placeholder="Ulangi password baru"></div>
+                <button class="btn-save" onclick="changePassword()">🔒 Update Password</button>
+              </div>
+            </div>
+            <!-- NOTIF -->
+            <div id="ptab-notif" style="display:none">
+              <div class="profile-section-title">Pengaturan Notifikasi</div>
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <label class="checkbox-label" style="justify-content:space-between;font-size:0.9rem;color:var(--white)">Promo & Penawaran <input type="checkbox" checked style="accent-color:var(--gold)"></label>
+                <label class="checkbox-label" style="justify-content:space-between;font-size:0.9rem;color:var(--white)">Update Pesanan <input type="checkbox" checked style="accent-color:var(--gold)"></label>
+                <label class="checkbox-label" style="justify-content:space-between;font-size:0.9rem;color:var(--white)">Newsletter Mingguan <input type="checkbox" style="accent-color:var(--gold)"></label>
+                <label class="checkbox-label" style="justify-content:space-between;font-size:0.9rem;color:var(--white)">Notifikasi Email <input type="checkbox" checked style="accent-color:var(--gold)"></label>
+                <button class="btn-save" onclick="showToast('✅ Pengaturan notifikasi disimpan!')">💾 Simpan Pengaturan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="sub-page" id="sub-orders">
+      <div style="max-width:800px;margin:0 auto">
+        <div class="section-title" style="margin-bottom:32px">Pesanan <em>Saya</em></div>
+        <div class="order-list" id="orderList"></div>
+      </div>
+    </div>
+
+    <!-- WISHLIST -->
+    <div class="sub-page" id="sub-wishlist">
+      <div class="section-title" style="margin-bottom:32px">Wishlist <em>Saya</em></div>
+      <div class="wish-grid" id="wishGrid"></div>
+    </div>
+
+  </main>
+
+  <!-- CART -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-panel" id="cartPanel">
+    <div class="cart-head">
+      <h3>🛒 Keranjang Saya</h3>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-body" id="cartBody"></div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total Pembayaran</span>
+        <span class="cart-total-val" id="cartTotalVal">Rp 0</span>
+      </div>
+      <button class="checkout-btn" onclick="doCheckout()">Bayar Sekarang →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Berhasil!</div>
+
+<script>
+// ═══════════ DATABASE (localStorage) ═══════════
+const DB = {
+  get users() { return JSON.parse(localStorage.getItem('nova_users') || '[]') },
+  set users(v) { localStorage.setItem('nova_users', JSON.stringify(v)) },
+  get session() { return JSON.parse(localStorage.getItem('nova_session') || 'null') },
+  set session(v) { localStorage.setItem('nova_session', JSON.stringify(v)) },
+  get orders() { return JSON.parse(localStorage.getItem('nova_orders') || '[]') },
+  set orders(v) { localStorage.setItem('nova_orders', JSON.stringify(v)) },
+  getUser(email) { return this.users.find(u => u.email === email) },
+  addUser(user) { const u = this.users; u.push(user); this.users = u },
+  updateUser(email, data) {
+    const u = this.users;
+    const idx = u.findIndex(x => x.email === email);
+    if (idx >= 0) { u[idx] = {...u[idx], ...data}; this.users = u; }
+    if (this.session && this.session.email === email) {
+      this.session = {...this.session, ...data};
+    }
+  }
+};
+
+// ═══════════ PRODUCTS ═══════════
+const PRODUCTS = [
+  {id:1,emoji:'👗',name:'Dress Floral Elegan',category:'fashion',tag:'new',price:385000,original:500000,rating:4.8,reviews:234,desc:'Bahan premium breathable, nyaman seharian.'},
+  {id:2,emoji:'👟',name:'Sneakers Urban Style',category:'fashion',tag:'hot',price:620000,original:820000,rating:4.9,reviews:512,desc:'Desain modern, sol anti-slip berkualitas.'},
+  {id:3,emoji:'⌚',name:'Jam Tangan Minimalis',category:'aksesoris',tag:'sale',price:450000,original:680000,rating:4.7,reviews:189,desc:'Tahan air 30m, kaca sapphire anti-gores.'},
+  {id:4,emoji:'💄',name:'Lipstik Matte Luxe',category:'kecantikan',tag:'new',price:125000,original:165000,rating:4.9,reviews:876,desc:'12 jam ketahanan, formula lembab.'},
+  {id:5,emoji:'🎧',name:'Earbuds Wireless Pro',category:'elektronik',tag:'hot',price:750000,original:1100000,rating:4.8,reviews:341,desc:'ANC aktif, baterai 30 jam, suara jernih.'},
+  {id:6,emoji:'🌿',name:'Skincare Set Natural',category:'kecantikan',tag:'sale',price:290000,original:420000,rating:4.6,reviews:428,desc:'100% bahan alami, cocok semua kulit.'},
+  {id:7,emoji:'🧥',name:'Jaket Bomber Premium',category:'fashion',tag:'new',price:980000,original:1350000,rating:4.9,reviews:167,desc:'Waterproof, lapisan fleece dalam.'},
+  {id:8,emoji:'💍',name:'Cincin Silver Artisan',category:'aksesoris',tag:'hot',price:225000,original:310000,rating:4.8,reviews:293,desc:'Sterling silver 925, handcrafted.'},
+  {id:9,emoji:'📱',name:'Phone Stand Bamboo',category:'lifestyle',tag:'new',price:89000,original:130000,rating:4.7,reviews:562,desc:'Ramah lingkungan, adjustable 360°.'},
+  {id:10,emoji:'☕',name:'Tumbler Vacuum',category:'lifestyle',tag:'sale',price:195000,original:280000,rating:4.8,reviews:734,desc:'Jaga suhu 24 jam, BPA free.'},
+  {id:11,emoji:'🕶️',name:'Kacamata UV400',category:'aksesoris',tag:'hot',price:310000,original:450000,rating:4.7,reviews:198,desc:'UV400, frame titanium ringan.'},
+  {id:12,emoji:'🧴',name:'Parfum Oud Collection',category:'kecantikan',tag:'new',price:485000,original:650000,rating:4.9,reviews:312,desc:'Tahan 8-10 jam, imported essence.'},
+];
+
+const CATEGORIES = ['semua','fashion','aksesoris','kecantikan','elektronik','lifestyle'];
+let currentFilter = 'semua';
+let cart = [];
+let wishlist = new Set();
+let currentUser = null;
+
+// ═══════════ PAGE ROUTING ═══════════
+function goTo(pageId) {
+  document.querySelectorAll('.auth-page, #app-page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(pageId);
+  if (target) { target.classList.add('active'); window.scrollTo(0,0); }
+}
+
+function setSubPage(name) {
+  document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('sub-'+name);
+  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+  if (name === 'profile') loadProfileData();
+  if (name === 'orders') renderOrders();
+  if (name === 'wishlist') renderWishlist();
+}
+
+// ═══════════ AUTH SYSTEM ═══════════
+function showLoginTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('login-email-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('login-phone-form').style.display = tab === 'phone' ? 'block' : 'none';
+}
+
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁️'; }
+}
+
+function setError(fieldId, errId, show) {
+  const f = document.getElementById(fieldId);
+  const e = document.getElementById(errId);
+  if (!f || !e) return;
+  if (show) { f.classList.add('error'); e.classList.add('show'); }
+  else { f.classList.remove('error'); e.classList.remove('show'); }
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  let valid = true;
+
+  if (!email || !email.includes('@')) { setError('login-email','login-email-err',true); valid=false; }
+  else setError('login-email','login-email-err',false);
+
+  if (pass.length < 6) { setError('login-pass','login-pass-err',true); valid=false; }
+  else setError('login-pass','login-pass-err',false);
+
+  if (!valid) return;
+
+  const btn = document.querySelector('#page-login .btn-auth');
+  btn.innerHTML = '<span class="spinner"></span>Memproses...';
+  btn.classList.add('loading');
+
+  setTimeout(() => {
+    const user = DB.getUser(email);
+    if (!user || user.password !== hashPass(pass)) {
+      btn.innerHTML = '<span id="login-btn-text">Masuk Sekarang</span>';
+      btn.classList.remove('loading');
+      setError('login-email','login-email-err',true);
+      document.getElementById('login-email-err').textContent = '⚠️ Email atau password salah';
+      setError('login-pass','login-pass-err',true);
+      document.getElementById('login-pass-err').textContent = '⚠️ Email atau password salah';
+      return;
+    }
+    DB.session = user;
+    loginSuccess(user);
+  }, 1200);
+}
+
+function doRegister() {
+  const fname = document.getElementById('reg-fname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  let valid = true;
+
+  if (!fname) { setError('reg-fname','reg-fname-err',true); valid=false; }
+  else setError('reg-fname','reg-fname-err',false);
+
+  if (!email || !email.includes('@')) { setError('reg-email','reg-email-err',true); valid=false; }
+  else if (DB.getUser(email)) {
+    setError('reg-email','reg-email-err',true);
+    document.getElementById('reg-email-err').textContent = '⚠️ Email sudah terdaftar';
+    valid=false;
+  } else setError('reg-email','reg-email-err',false);
+
+  if (pass.length < 8) { setError('reg-pass','reg-pass-err',true); valid=false; }
+  else setError('reg-pass','reg-pass-err',false);
+
+  if (pass !== pass2) { setError('reg-pass2','reg-pass2-err',true); valid=false; }
+  else setError('reg-pass2','reg-pass2-err',false);
+
+  if (!valid) return;
+
+  const btn = document.querySelector('#page-register .btn-auth');
+  btn.innerHTML = '<span class="spinner"></span>Mendaftarkan...';
+  btn.classList.add('loading');
+
+  setTimeout(() => {
+    const lname = document.getElementById('reg-lname').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    const user = {
+      email, password: hashPass(pass),
+      fname, lname, phone,
+      name: (fname + ' ' + lname).trim(),
+      joinDate: new Date().toLocaleDateString('id-ID'),
+      gender: '', bday: '',
+      address: {name:'',street:'',city:'',zip:'',province:''}
+    };
+    DB.addUser(user);
+    DB.session = user;
+    loginSuccess(user);
+    btn.innerHTML = '<span id="reg-btn-text">Daftar Gratis</span>';
+    btn.classList.remove('loading');
+  }, 1200);
+}
+
+function socialLogin(provider) {
+  const mockUser = {
+    email: provider.toLowerCase() + '_user@example.com',
+    password: hashPass('social123'),
+    fname: 'Nova', lname: 'User', phone: '+62812000000',
+    name: 'Nova User',
+    joinDate: new Date().toLocaleDateString('id-ID'),
+    gender: '', bday: '',
+    address: {name:'',street:'',city:'',zip:'',province:''}
+  };
+  if (!DB.getUser(mockUser.email)) DB.addUser(mockUser);
+  DB.session = mockUser;
+  loginSuccess(mockUser);
+}
+
+function doForgot() {
+  const email = document.getElementById('forgot-email').value.trim();
+  if (!email.includes('@')) { showToast('⚠️ Masukkan email yang valid'); return; }
+  showToast('📧 Link reset dikirim ke ' + email);
+  setTimeout(() => goTo('page-login'), 1500);
+}
+
+function showForgot() { goTo('page-forgot'); }
+
+function loginSuccess(user) {
+  currentUser = user;
+  updateHeaderUser(user);
+  goTo('app-page');
+  initApp();
+  showToast('👋 Selamat datang, ' + user.fname + '!');
+}
+
+function doLogout() {
+  DB.session = null;
+  currentUser = null;
+  cart = [];
+  wishlist = new Set();
+  goTo('page-login');
+  showToast('👋 Sampai jumpa!');
+}
+
+function updateHeaderUser(user) {
+  const initials = (user.fname[0] + (user.lname ? user.lname[0] : '')).toUpperCase();
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('userNameHeader').textContent = user.fname;
+}
+
+function hashPass(pass) {
+  let h = 0;
+  for (let i = 0; i < pass.length; i++) h = ((h << 5) - h) + pass.charCodeAt(i);
+  return h.toString(36);
+}
+
+// ═══════════ OTP SYSTEM ═══════════
+function buildOtpInputs(containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const inp = document.createElement('input');
+    inp.className = 'otp-input'; inp.maxLength = 1; inp.type = 'tel';
+    inp.addEventListener('input', e => {
+      if (e.target.value && inp.nextElementSibling) inp.nextElementSibling.focus();
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !inp.value && inp.previousElementSibling) inp.previousElementSibling.focus();
+    });
+    c.appendChild(inp);
+  }
+}
+
+function sendOTP(context) {
+  const section = document.getElementById('otp-section-' + context);
+  section.style.display = 'block';
+  buildOtpInputs('otp-inputs-' + context);
+  showToast('📱 Kode OTP dikirim! (Demo: 123456)');
+}
+
+function verifyOTP(context) {
+  const inputs = document.querySelectorAll('#otp-inputs-' + context + ' .otp-input');
+  const code = Array.from(inputs).map(i => i.value).join('');
+  if (code === '123456') {
+    const phone = document.getElementById('login-phone').value;
+    let user = DB.users.find(u => u.phone === phone);
+    if (!user) {
+      user = {email: phone+'@phone.nova', password: hashPass('phone'), fname:'User', lname:'', phone, name:'User', joinDate:new Date().toLocaleDateString('id-ID'), gender:'', bday:'', address:{name:'',street:'',city:'',zip:'',province:''}};
+      DB.addUser(user);
+    }
+    DB.session = user; loginSuccess(user);
+  } else showToast('⚠️ Kode OTP salah. Coba lagi!');
+}
+
+function checkPassStrength(pass) {
+  const bar = document.getElementById('strength-bar');
+  const text = document.getElementById('strength-text');
+  const wrap = document.getElementById('pass-strength');
+  if (!pass) { wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+  let score = 0;
+  if (pass.length >= 8) score++;
+  if (/[A-Z]/.test(pass)) score++;
+  if (/[0-9]/.test(pass)) score++;
+  if (/[^A-Za-z0-9]/.test(pass)) score++;
+  const levels = ['','Lemah','Cukup','Kuat','Sangat Kuat'];
+  const colors = ['','#e85d75','#c9a96e','#5b8dee','#4caf8a'];
+  bar.style.width = (score * 25) + '%';
+  bar.style.background = colors[score];
+  text.textContent = levels[score]; text.style.color = colors[score];
+}
+
+// ═══════════ APP INIT ═══════════
+function initApp() {
+  renderFilters();
+  renderProducts('semua');
+  renderCart();
+}
+
+function renderFilters() {
+  const c = document.getElementById('filterBtns');
+  const labels = {semua:'Semua',fashion:'Fashion',aksesoris:'Aksesoris',kecantikan:'Kecantikan',elektronik:'Elektronik',lifestyle:'Lifestyle'};
+  c.innerHTML = CATEGORIES.map(cat =>
+    `<button class="filter-btn ${cat==='semua'?'active':''}" onclick="filterProducts('${cat}',this)">${labels[cat]}</button>`
+  ).join('');
+}
+
+function filterProducts(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat);
+}
+
+function renderProducts(filter) {
+  const grid = document.getElementById('productsGrid');
+  const list = filter === 'semua' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
+  grid.innerHTML = list.map((p, i) => `
+    <div class="product-card" style="animation-delay:${i*0.06}s">
+      ${p.tag ? `<div class="product-badge badge-${p.tag}">${p.tag==='new'?'✦ BARU':p.tag==='hot'?'🔥 HOT':'🏷️ SALE'}</div>` : ''}
+      <button class="product-wish ${wishlist.has(p.id)?'liked':''}" id="wish-${p.id}" onclick="toggleWish(${p.id})">${wishlist.has(p.id)?'♥':'♡'}</button>
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-info">
+        <div class="product-cat">${p.category}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-rating"><span class="stars">${'★'.repeat(Math.floor(p.rating))}</span><span class="reviews">${p.rating} (${p.reviews})</span></div>
+        <div class="product-footer">
+          <div class="product-price-wrap">
+            ${p.original?`<span class="price-old">Rp ${p.original.toLocaleString('id-ID')}</span>`:''}
+            <span class="price-now">Rp ${p.price.toLocaleString('id-ID')}</span>
+          </div>
+          <button class="add-btn" id="abtn-${p.id}" onclick="addToCart({id:${p.id},emoji:'${p.emoji}',name:'${p.name}',price:${p.price},category:'${p.category}'})">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════ CART ═══════════
+function addToCart(product) {
+  const ex = cart.find(i => i.id === product.id);
+  if (ex) ex.qty++; else cart.push({...product, qty:1});
+  renderCart();
+  showToast(`${product.emoji} ${product.name} ditambahkan!`);
+  const btn = document.getElementById('abtn-' + product.id);
+  if (btn) { btn.classList.add('added'); btn.textContent='✓'; setTimeout(()=>{btn.classList.remove('added');btn.textContent='+'},1400); }
+}
+
+function renderCart() {
+  const count = cart.reduce((a,b) => a+b.qty, 0);
+  document.getElementById('cartBadge').textContent = count;
+  const body = document.getElementById('cartBody');
+  const foot = document.getElementById('cartFoot');
+  if (!cart.length) {
+    body.innerHTML = `<div class="cart-empty"><div class="icon">🛒</div><p>Keranjangmu kosong.<br>Yuk mulai belanja!</p></div>`;
+    foot.style.display = 'none'; return;
+  }
+  foot.style.display = 'block';
+  body.innerHTML = cart.map((item, i) => `
+    <div class="cart-item">
+      <div class="ci-emoji">${item.emoji}</div>
+      <div class="ci-details">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+          <span class="qty-n">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+        </div>
+      </div>
+      <button class="ci-remove" onclick="removeItem(${i})">✕</button>
+    </div>
+  `).join('');
+  const total = cart.reduce((a,b) => a+b.price*b.qty, 0);
+  document.getElementById('cartTotalVal').textContent = 'Rp ' + total.toLocaleString('id-ID');
+}
+
+function changeQty(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  renderCart();
+}
+function removeItem(idx) { cart.splice(idx, 1); renderCart(); }
+
+function toggleCart() {
+  document.getElementById('cartPanel').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+function doCheckout() {
+  if (!cart.length) return;
+  const total = cart.reduce((a,b) => a+b.price*b.qty, 0);
+  const orderId = 'NS' + Date.now().toString().slice(-8);
+  const newOrder = {
+    id: orderId,
+    items: cart.map(c => ({emoji:c.emoji,name:c.name,price:c.price,qty:c.qty})),
+    total, status: 'processing',
+    date: new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}),
+    user: currentUser.email
+  };
+  const orders = DB.orders;
+  orders.unshift(newOrder);
+  DB.orders = orders;
+  cart = [];
+  renderCart();
+  toggleCart();
+  showToast('🎉 Pesanan #' + orderId + ' berhasil dibuat!');
+}
+
+// ═══════════ WISHLIST ═══════════
+function toggleWish(id) {
+  if (wishlist.has(id)) wishlist.delete(id); else wishlist.add(id);
+  const btn = document.getElementById('wish-' + id);
+  if (btn) { btn.classList.toggle('liked'); btn.textContent = wishlist.has(id) ? '♥' : '♡'; }
+}
+
+function renderWishlist() {
+  const grid = document.getElementById('wishGrid');
+  const items = PRODUCTS.filter(p => wishlist.has(p.id));
+  if (!items.length) {
+    grid.innerHTML = `<div style="text-align:center;color:var(--muted);padding:60px;grid-column:1/-1"><div style="font-size:3.5rem;margin-bottom:12px;opacity:0.4">❤️</div><p>Belum ada produk di wishlist.</p></div>`;
+    return;
+  }
+  grid.innerHTML = items.map(p => `
+    <div class="wish-item" onclick="addToCart({id:${p.id},emoji:'${p.emoji}',name:'${p.name}',price:${p.price},category:'${p.category}'})">
+      <div class="wish-img">${p.emoji}</div>
+      <div class="wish-info">
+        <div class="wish-name">${p.name}</div>
+        <div class="wish-price">Rp ${p.price.toLocaleString('id-ID')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════ ORDERS ═══════════
+function renderOrders() {
+  const list = document.getElementById('orderList');
+  const orders = DB.orders.filter(o => o.user === currentUser?.email);
+  if (!orders.length) {
+    list.innerHTML = `<div class="no-orders"><div class="icon">📦</div><p>Belum ada pesanan.<br>Yuk belanja sekarang!</p></div>`;
+    return;
+  }
+  const statusLabel = {delivered:'Terkirim',processing:'Diproses',cancelled:'Dibatalkan'};
+  list.innerHTML = orders.map(o => `
+    <div class="order-item">
+      <div class="order-top">
+        <span class="order-id">#${o.id} · ${o.date}</span>
+        <span class="order-status status-${o.status}">${statusLabel[o.status]||o.status}</span>
+      </div>
+      <div class="order-items-list">${o.items.map(i=>`<div class="order-emoji" title="${i.name}">${i.emoji}</div>`).join('')}</div>
+      <div class="order-bottom">
+        <span class="order-total">Total: <strong>Rp ${o.total.toLocaleString('id-ID')}</strong></span>
+        <button class="filter-btn" style="font-size:0.75rem" onclick="showToast('📦 Pesanan dalam perjalanan!')">Lacak</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════ PROFILE ═══════════
+function loadProfileData() {
+  if (!currentUser) return;
+  const u = DB.getUser(currentUser.email) || currentUser;
+  document.getElementById('profileName').textContent = u.name || u.fname;
+  document.getElementById('profileEmail').textContent = u.email;
+  const initials = (u.fname[0] + (u.lname ? u.lname[0] : '')).toUpperCase();
+  document.getElementById('profileAvatarBig').innerHTML = initials + '<div class="online-dot"></div>';
+  document.getElementById('pf-fname').value = u.fname || '';
+  document.getElementById('pf-lname').value = u.lname || '';
+  document.getElementById('pf-email').value = u.email || '';
+  document.getElementById('pf-phone').value = u.phone || '';
+  document.getElementById('pf-bday').value = u.bday || '';
+  document.getElementById('pf-gender').value = u.gender || '';
+  if (u.address) {
+    document.getElementById('addr-name').value = u.address.name || '';
+    document.getElementById('addr-street').value = u.address.street || '';
+    document.getElementById('addr-city').value = u.address.city || '';
+    document.getElementById('addr-zip').value = u.address.zip || '';
+    document.getElementById('addr-province').value = u.address.province || '';
+  }
+}
+
+function saveProfile() {
+  const fname = document.getElementById('pf-fname').value.trim();
+  const lname = document.getElementById('pf-lname').value.trim();
+  const phone = document.getElementById('pf-phone').value.trim();
+  const bday = document.getElementById('pf-bday').value;
+  const gender = document.getElementById('pf-gender').value;
+  DB.updateUser(currentUser.email, {fname, lname, name: (fname+' '+lname).trim(), phone, bday, gender});
+  currentUser = DB.getUser(currentUser.email);
+  updateHeaderUser(currentUser);
+  loadProfileData();
+  showToast('✅ Profil berhasil diperbarui!');
+}
+
+function saveAddress() {
+  const address = {
+    name: document.getElementById('addr-name').value,
+    street: document.getElementById('addr-street').value,
+    city: document.getElementById('addr-city').value,
+    zip: document.getElementById('addr-zip').value,
+    province: document.getElementById('addr-province').value,
+  };
+  DB.updateUser(currentUser.email, {address});
+  showToast('✅ Alamat berhasil disimpan!');
+}
+
+function changePassword() {
+  const oldPass = document.getElementById('sec-old').value;
+  const newPass = document.getElementById('sec-new').value;
+  const confirmPass = document.getElementById('sec-confirm').value;
+  const user = DB.getUser(currentUser.email);
+  if (user.password !== hashPass(oldPass)) { showToast('⚠️ Password lama salah!'); return; }
+  if (newPass.length < 8) { showToast('⚠️ Password minimal 8 karakter!'); return; }
+  if (newPass !== confirmPass) { showToast('⚠️ Konfirmasi password tidak cocok!'); return; }
+  DB.updateUser(currentUser.email, {password: hashPass(newPass)});
+  document.getElementById('sec-old').value = '';
+  document.getElementById('sec-new').value = '';
+  document.getElementById('sec-confirm').value = '';
+  showToast('🔒 Password berhasil diubah!');
+}
+
+function showProfileTab(tab, el) {
+  document.querySelectorAll('.profile-nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  ['info','address','security','notif'].forEach(t => {
+    const el = document.getElementById('ptab-'+t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+// ═══════════ UI HELPERS ═══════════
+function toggleDropdown() {
+  document.getElementById('userDropdown').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.user-menu')) document.getElementById('userDropdown')?.classList.remove('open');
+});
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ═══════════ BOOTSTRAP ═══════════
+(function init() {
+  const session = DB.session;
+  if (session) {
+    currentUser = session;
+    updateHeaderUser(session);
+    goTo('app-page');
+    initApp();
+  } else {
+    goTo('page-login');
+  }
+})();
+</script>
+</body>
+</html>
