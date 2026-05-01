@@ -224,4 +224,889 @@ input,select,textarea{font-family:var(--font)}
 .price-wrap{display:flex;flex-direction:column}
 .price-old{font-size:0.7rem;color:var(--muted);text-decoration:line-through}
 .price-now{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--gold)}
-.add-btn{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;width:40px;height:40px;border-radius:10px;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transitio
+.add-btn{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;width:40px;height:40px;border-radius:10px;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+.add-btn:hover{transform:scale(1.2) rotate(5deg);box-shadow:0 8px 20px rgba(201,169,110,0.4)}
+.add-btn.added{background:linear-gradient(135deg,var(--green),#6ecba4)}
+
+/* CART */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.4s}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-panel{position:fixed;top:0;right:0;bottom:0;width:420px;background:var(--surface);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform 0.5s cubic-bezier(0.77,0,0.175,1);display:flex;flex-direction:column}
+.cart-panel.open{transform:translateX(0)}
+.cart-head{padding:26px 30px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-head h3{font-family:var(--serif);font-size:1.3rem;font-weight:900}
+.cart-close{background:var(--card);border:1px solid var(--border);color:var(--white);width:36px;height:36px;border-radius:50%;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.cart-close:hover{background:var(--accent);border-color:var(--accent)}
+.cart-body{flex:1;overflow-y:auto;padding:18px 30px}
+.cart-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.cart-empty .icon{font-size:3.5rem;margin-bottom:12px;opacity:0.4}
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);animation:fadeUp 0.3s ease}
+.ci-emoji{width:58px;height:58px;background:var(--card);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:1px solid var(--border);flex-shrink:0}
+.ci-details{flex:1}
+.ci-name{font-size:0.86rem;font-weight:600;margin-bottom:4px}
+.ci-price{color:var(--gold);font-size:0.82rem;font-weight:700}
+.ci-qty{display:flex;align-items:center;gap:8px;margin-top:8px}
+.qty-btn{background:var(--card);border:1px solid var(--border);color:var(--white);width:26px;height:26px;border-radius:6px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.qty-btn:hover{border-color:var(--gold);color:var(--gold)}
+.qty-n{font-size:0.86rem;font-weight:700;min-width:18px;text-align:center}
+.ci-remove{background:transparent;border:none;color:var(--muted);font-size:1rem;align-self:flex-start;transition:color 0.2s}
+.ci-remove:hover{color:var(--accent)}
+.cart-foot{padding:18px 30px;border-top:1px solid var(--border)}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cart-total-label{color:var(--muted);font-size:0.86rem}
+.cart-total-val{font-family:var(--serif);font-size:1.6rem;font-weight:900;color:var(--gold)}
+.checkout-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;padding:14px;border-radius:12px;font-size:0.92rem;font-weight:700;transition:all 0.3s}
+.checkout-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(201,169,110,0.4)}
+
+/* PROFILE */
+.profile-page{max-width:960px;margin:0 auto}
+.profile-header-card{background:linear-gradient(135deg,var(--surface),var(--card));border:1px solid var(--border);border-radius:24px;padding:36px;display:flex;align-items:center;gap:28px;margin-bottom:28px;position:relative;overflow:hidden}
+.profile-header-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(201,169,110,0.06),transparent 60%)}
+.profile-avatar-big{width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#0a0a0f;border:4px solid rgba(201,169,110,0.3);flex-shrink:0;position:relative}
+.online-dot{position:absolute;bottom:4px;right:4px;width:14px;height:14px;background:var(--green);border-radius:50%;border:2px solid var(--surface)}
+.profile-info h2{font-family:var(--serif);font-size:1.5rem;font-weight:900;margin-bottom:4px}
+.profile-info .email{color:var(--muted);font-size:0.84rem;margin-bottom:10px}
+.profile-badges{display:flex;gap:8px;flex-wrap:wrap}
+.pbadge{padding:4px 12px;border-radius:100px;font-size:0.68rem;font-weight:700;letter-spacing:0.08em}
+.pbadge-gold{background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.25);color:var(--gold)}
+.pbadge-green{background:rgba(76,175,138,0.1);border:1px solid rgba(76,175,138,0.25);color:var(--green)}
+.profile-grid{display:grid;grid-template-columns:200px 1fr;gap:20px}
+.profile-nav{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:10px;overflow:hidden}
+.pnav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;font-size:0.84rem;color:var(--muted);transition:all 0.2s;cursor:pointer}
+.pnav-item:hover{background:var(--card);color:var(--white)}
+.pnav-item.active{background:linear-gradient(135deg,rgba(201,169,110,0.15),rgba(201,169,110,0.05));color:var(--gold);font-weight:600}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px}
+.profile-section-title{font-family:var(--serif);font-size:1.2rem;font-weight:900;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.profile-form .form-input{background:var(--card)}
+.btn-save{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f;border:none;padding:11px 26px;border-radius:10px;font-size:0.86rem;font-weight:700;transition:all 0.3s;margin-top:6px}
+.btn-save:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,169,110,0.35)}
+
+/* ORDERS */
+.order-list{display:flex;flex-direction:column;gap:14px}
+.order-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;transition:all 0.2s}
+.order-item:hover{border-color:rgba(201,169,110,0.2)}
+.order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.order-id{font-size:0.78rem;color:var(--muted)}
+.order-status{font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:100px}
+.s-delivered{background:rgba(76,175,138,0.1);color:var(--green);border:1px solid rgba(76,175,138,0.25)}
+.s-processing{background:rgba(201,169,110,0.1);color:var(--gold);border:1px solid rgba(201,169,110,0.25)}
+.s-cancelled{background:rgba(232,93,117,0.1);color:var(--accent);border:1px solid rgba(232,93,117,0.25)}
+.order-emojis{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.order-emoji{width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.order-bottom{display:flex;justify-content:space-between;align-items:center}
+.order-total{font-size:0.84rem;color:var(--muted)}
+.order-total strong{color:var(--gold);font-family:var(--serif);font-size:0.96rem}
+.no-data{text-align:center;padding:60px;color:var(--muted)}
+.no-data .icon{font-size:3.5rem;margin-bottom:12px;opacity:0.4}
+
+/* WISHLIST */
+.wish-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.wish-item{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.3s;cursor:pointer}
+.wish-item:hover{border-color:rgba(201,169,110,0.3);transform:translateY(-4px)}
+.wish-img{height:110px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:var(--surface)}
+.wish-info{padding:12px}
+.wish-name{font-size:0.8rem;font-weight:600;margin-bottom:4px}
+.wish-price{color:var(--gold);font-size:0.8rem;font-weight:700}
+
+/* TOAST */
+.toast{position:fixed;bottom:34px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid rgba(76,175,138,0.35);color:var(--white);padding:12px 24px;border-radius:100px;font-size:0.84rem;font-weight:600;z-index:500;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;max-width:90vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* FOOTER */
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:50px 60px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;margin-top:80px}
+.footer-brand .logo{font-size:1.2rem;margin-bottom:12px;display:block}
+.footer-brand p{font-size:0.8rem;color:var(--muted);line-height:1.7;max-width:250px}
+.footer-col h4{font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.footer-col a{display:block;color:var(--muted);font-size:0.8rem;margin-bottom:8px;transition:color 0.2s;cursor:pointer}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{background:var(--surface);border-top:1px solid var(--border);padding:14px 60px;display:flex;justify-content:space-between;font-size:0.76rem;color:var(--muted)}
+
+/* SUPABASE STATUS */
+.db-status{display:flex;align-items:center;gap:6px;font-size:0.72rem;padding:4px 10px;border-radius:100px;border:1px solid}
+.db-status.connected{color:var(--green);border-color:rgba(76,175,138,0.3);background:rgba(76,175,138,0.08)}
+.db-status.disconnected{color:var(--accent);border-color:rgba(232,93,117,0.3);background:rgba(232,93,117,0.08)}
+.db-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+@media(max-width:900px){
+  .auth-container{grid-template-columns:1fr}
+  .auth-visual{display:none}
+  .auth-form-side{padding:32px 24px}
+  .header{padding:0 20px}
+  .header-search{display:none}
+  .hero{grid-template-columns:1fr;padding:36px 20px;min-height:auto;padding-top:70px}
+  .hero-visual{display:none}
+  .sub-page{padding:28px 18px}
+  .products-section{padding:50px 18px}
+  .featured-banner{margin:0 18px;grid-template-columns:1fr;padding:28px;gap:28px}
+  .featured-emoji-big{display:none}
+  .stats-bar{flex-wrap:wrap}
+  .stat{min-width:50%;padding:20px 24px}
+  .profile-grid{grid-template-columns:1fr}
+  .footer{padding:32px 18px;grid-template-columns:1fr 1fr;gap:28px}
+  .footer-bottom{padding:12px 18px;flex-direction:column;gap:6px;text-align:center}
+  .cart-panel{width:100%}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo">NOVA<span> STORE</span></div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="loading-text">Menghubungkan ke server...</div>
+</div>
+
+<!-- ═══ LOGIN ═══ -->
+<div class="auth-page" id="page-login">
+  <div class="auth-bg-shapes"><div class="auth-shape s1"></div><div class="auth-shape s2"></div></div>
+  <div class="auth-container">
+    <div class="auth-visual">
+      <div><div class="auth-logo">NOVA<span> STORE</span></div><div class="auth-tagline">Premium Collection 2025</div></div>
+      <div class="auth-visual-center">
+        <span class="auth-big-emoji">🛍️</span>
+        <h2>Belanja <em>Lebih Mudah</em> & Menyenangkan</h2>
+        <p>Masuk dan temukan penawaran terbaik hari ini.</p>
+      </div>
+      <div class="auth-features">
+        <div class="auth-feature"><div class="auth-feature-icon">🔒</div><span>Data aman di server Supabase</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">🚀</div><span>Pengiriman cepat ke seluruh Indonesia</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">💎</div><span>Produk asli bergaransi resmi</span></div>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchLoginTab('email',this)">Email</button>
+        <button class="auth-tab" onclick="switchLoginTab('phone',this)">Nomor HP</button>
+      </div>
+
+      <!-- EMAIL -->
+      <div id="login-email-tab">
+        <div class="auth-form-title">Selamat Datang 👋</div>
+        <div class="auth-form-sub">Masuk untuk melanjutkan belanjamu</div>
+        <div class="alert alert-error" id="login-alert">⚠️ <span id="login-alert-msg"></span></div>
+        <div class="social-btns">
+          <button class="social-btn" onclick="loginGoogle()">🌐 Google</button>
+        </div>
+        <div class="divider">atau masuk dengan email</div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="input-icon"><span class="icon">📧</span>
+            <input type="email" class="form-input" id="l-email" placeholder="nama@email.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-icon" style="position:relative"><span class="icon">🔑</span>
+            <input type="password" class="form-input" id="l-pass" placeholder="Password kamu" onkeydown="if(event.key==='Enter')doLogin()">
+            <button class="pw-toggle" onclick="togglePw('l-pass',this)">👁️</button>
+          </div>
+        </div>
+        <div class="remember-row">
+          <label class="checkbox-label"><input type="checkbox"> Ingat saya</label>
+          <span class="forgot-link" onclick="goToPage('page-forgot')">Lupa password?</span>
+        </div>
+        <button class="btn-auth" id="login-btn" onclick="doLogin()">Masuk Sekarang</button>
+        <div class="auth-footer">Belum punya akun? <a onclick="goToPage('page-register')">Daftar gratis</a></div>
+      </div>
+
+      <!-- PHONE -->
+      <div id="login-phone-tab" style="display:none">
+        <div class="auth-form-title">Masuk via HP 📱</div>
+        <div class="auth-form-sub">Kode OTP dikirim ke nomor kamu</div>
+        <div class="alert alert-error" id="phone-alert">⚠️ <span id="phone-alert-msg"></span></div>
+        <div class="form-group">
+          <label class="form-label">Nomor HP</label>
+          <div class="input-icon"><span class="icon">📱</span>
+            <input type="tel" class="form-input" id="l-phone" placeholder="+62812xxxxxxxx">
+          </div>
+        </div>
+        <button class="btn-auth" onclick="loginPhone()">Kirim Kode OTP</button>
+        <div class="auth-footer" style="margin-top:16px">Belum punya akun? <a onclick="goToPage('page-register')">Daftar gratis</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REGISTER ═══ -->
+<div class="auth-page" id="page-register">
+  <div class="auth-bg-shapes"><div class="auth-shape s1"></div><div class="auth-shape s2"></div></div>
+  <div class="auth-container">
+    <div class="auth-visual">
+      <div><div class="auth-logo">NOVA<span> STORE</span></div><div class="auth-tagline">Premium Collection 2025</div></div>
+      <div class="auth-visual-center">
+        <span class="auth-big-emoji">🎉</span>
+        <h2>Bergabung & Nikmati <em>Ribuan Produk</em></h2>
+        <p>Daftar gratis dan dapatkan voucher Rp 50.000!</p>
+      </div>
+      <div class="auth-features">
+        <div class="auth-feature"><div class="auth-feature-icon">🎁</div><span>Voucher selamat datang Rp 50.000</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">⭐</div><span>Poin reward setiap pembelian</span></div>
+        <div class="auth-feature"><div class="auth-feature-icon">🛡️</div><span>Jaminan uang kembali 30 hari</span></div>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-form-title">Buat Akun Baru ✨</div>
+      <div class="auth-form-sub">Isi data di bawah untuk mulai berbelanja</div>
+      <div class="alert alert-error" id="reg-alert">⚠️ <span id="reg-alert-msg"></span></div>
+      <div class="alert alert-success" id="reg-success">✅ <span id="reg-success-msg"></span></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nama Depan</label><input type="text" class="form-input" id="r-fname" placeholder="Nama depan"></div>
+        <div class="form-group"><label class="form-label">Nama Belakang</label><input type="text" class="form-input" id="r-lname" placeholder="Nama belakang"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label>
+        <div class="input-icon"><span class="icon">📧</span><input type="email" class="form-input" id="r-email" placeholder="nama@email.com"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Password</label>
+        <div class="input-icon" style="position:relative"><span class="icon">🔑</span>
+          <input type="password" class="form-input" id="r-pass" placeholder="Min. 8 karakter" oninput="checkStrength(this.value)">
+          <button class="pw-toggle" onclick="togglePw('r-pass',this)">👁️</button>
+        </div>
+        <div class="strength-wrap" id="strength-wrap">
+          <div class="strength-bar-bg"><div class="strength-bar" id="strength-bar"></div></div>
+          <span class="strength-text" id="strength-text"></span>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Konfirmasi Password</label>
+        <div class="input-icon"><span class="icon">🔒</span><input type="password" class="form-input" id="r-pass2" placeholder="Ulangi password"></div>
+      </div>
+      <button class="btn-auth" id="reg-btn" onclick="doRegister()">Daftar Gratis</button>
+      <div class="terms-text">Dengan mendaftar kamu setuju <a>Syarat & Ketentuan</a> kami</div>
+      <div class="auth-footer">Sudah punya akun? <a onclick="goToPage('page-login')">Masuk di sini</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FORGOT ═══ -->
+<div class="auth-page" id="page-forgot">
+  <div class="auth-bg-shapes"><div class="auth-shape s1"></div></div>
+  <div class="auth-container" style="grid-template-columns:1fr;max-width:480px">
+    <div class="auth-form-side">
+      <div style="text-align:center;margin-bottom:28px"><div style="font-size:3rem;margin-bottom:10px">🔐</div>
+        <div class="auth-logo" style="justify-content:center;display:flex">NOVA<span style="color:var(--white)">&nbsp;STORE</span></div>
+      </div>
+      <div class="auth-form-title">Lupa Password?</div>
+      <div class="auth-form-sub">Masukkan emailmu untuk menerima link reset password</div>
+      <div class="alert alert-success" id="forgot-success">✅ <span id="forgot-success-msg"></span></div>
+      <div class="form-group"><label class="form-label">Email</label>
+        <div class="input-icon"><span class="icon">📧</span><input type="email" class="form-input" id="f-email" placeholder="nama@email.com"></div>
+      </div>
+      <button class="btn-auth" onclick="doForgot()">Kirim Link Reset</button>
+      <div class="auth-footer" style="margin-top:18px"><a onclick="goToPage('page-login')">← Kembali ke Login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app-page">
+  <header class="header">
+    <div class="logo" onclick="setSubPage('home')">NOVA<span> STORE</span></div>
+    <div class="header-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" placeholder="Cari produk...">
+    </div>
+    <div class="header-actions">
+      <div class="db-status connected" id="dbStatus"><div class="db-dot"></div>Live</div>
+      <button class="cart-btn" onclick="toggleCart()">🛒 Keranjang <span class="cart-badge" id="cartBadge">0</span></button>
+      <div class="user-menu">
+        <button class="user-btn" onclick="toggleDropdown()">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <span id="userNameHeader">Akun</span> <span>▾</span>
+        </button>
+        <div class="dropdown" id="userDropdown">
+          <div class="dd-item" onclick="setSubPage('profile');toggleDropdown()">👤 Profil Saya</div>
+          <div class="dd-item" onclick="setSubPage('orders');toggleDropdown()">📦 Pesanan Saya</div>
+          <div class="dd-item" onclick="setSubPage('wishlist');toggleDropdown()">❤️ Wishlist</div>
+          <div class="dd-divider"></div>
+          <div class="dd-item danger" onclick="doLogout()">🚪 Keluar</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- HOME -->
+    <div class="sub-page active" id="sub-home">
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-tag">✦ Koleksi Premium 2025</div>
+          <h1>Temukan <em>Gaya Terbaik</em> Kamu</h1>
+          <p>Produk berkualitas tinggi pilihan terbaik untuk mereka yang menghargai keindahan & kenyamanan.</p>
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="document.getElementById('prod-section').scrollIntoView({behavior:'smooth'})">Lihat Koleksi</button>
+            <button class="btn-ghost">▶ Tonton Video</button>
+          </div>
+        </div>
+        <div class="hero-visual"><div class="hero-float">✨</div></div>
+      </section>
+
+      <div class="stats-bar">
+        <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Pelanggan Puas</div></div>
+        <div class="stat"><div class="stat-num">250+</div><div class="stat-label">Produk Premium</div></div>
+        <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Tingkat Kepuasan</div></div>
+        <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Layanan Pelanggan</div></div>
+      </div>
+
+      <div class="featured-banner" style="margin-top:60px">
+        <div class="featured-emoji-big">👜</div>
+        <div>
+          <div class="featured-tag">🔥 Produk Pilihan</div>
+          <h2>Tas Kulit <em>Artisan</em> Edition</h2>
+          <p>Dibuat tangan oleh pengrajin berpengalaman dengan kulit asli pilihan. Setiap detail dirancang dengan presisi.</p>
+          <div class="price-display">
+            <span class="main">Rp 1.250.000</span>
+            <span class="old">Rp 1.800.000</span>
+            <span class="disc">-31%</span>
+          </div>
+          <button class="btn-primary" onclick="addToCart({id:99,emoji:'👜',name:'Tas Kulit Artisan Edition',price:1250000,category:'Aksesoris'})">Tambah ke Keranjang</button>
+        </div>
+      </div>
+
+      <section class="products-section" id="prod-section">
+        <div class="section-head">
+          <div class="section-title">Koleksi <em>Terbaru</em></div>
+        </div>
+        <div class="filters" id="filterBtns"></div>
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <div class="footer">
+        <div class="footer-brand"><span class="logo">NOVA<span> STORE</span></span><p>Menghadirkan produk premium untuk melengkapi gaya hidupmu.</p></div>
+        <div class="footer-col"><h4>Toko</h4><a>Semua Produk</a><a>Promo Terkini</a><a>New Arrival</a><a>Best Seller</a></div>
+        <div class="footer-col"><h4>Bantuan</h4><a>FAQ</a><a>Cara Belanja</a><a>Retur & Refund</a><a>Lacak Pesanan</a></div>
+        <div class="footer-col"><h4>Ikuti Kami</h4><a>Instagram</a><a>TikTok</a><a>YouTube</a><a>WhatsApp</a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2025 NOVA STORE. Hak cipta dilindungi.</span><span>Powered by Supabase ⚡</span></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="sub-page" id="sub-profile">
+      <div class="profile-page">
+        <div class="profile-header-card">
+          <div class="profile-avatar-big" id="profileAvatarBig">?<div class="online-dot"></div></div>
+          <div class="profile-info">
+            <h2 id="profileName">Loading...</h2>
+            <div class="email" id="profileEmail">...</div>
+            <div class="profile-badges">
+              <span class="pbadge pbadge-gold">⭐ Member Premium</span>
+              <span class="pbadge pbadge-green">✓ Terverifikasi</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-grid">
+          <div class="profile-nav">
+            <div class="pnav-item active" onclick="showPTab('info',this)">👤 Info Akun</div>
+            <div class="pnav-item" onclick="showPTab('address',this)">📍 Alamat</div>
+            <div class="pnav-item" onclick="showPTab('security',this)">🔒 Keamanan</div>
+          </div>
+          <div class="profile-card">
+            <div id="ptab-info">
+              <div class="profile-section-title">Informasi Akun</div>
+              <div class="profile-form">
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">Nama Depan</label><input class="form-input" id="pf-fname" placeholder="Nama depan"></div>
+                  <div class="form-group"><label class="form-label">Nama Belakang</label><input class="form-input" id="pf-lname" placeholder="Nama belakang"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="pf-email" type="email" disabled style="opacity:0.5"></div>
+                <div class="form-group"><label class="form-label">Nomor HP</label><input class="form-input" id="pf-phone" placeholder="+62..."></div>
+                <div class="form-group"><label class="form-label">Tanggal Lahir</label><input class="form-input" id="pf-bday" type="date"></div>
+                <div class="form-group"><label class="form-label">Jenis Kelamin</label>
+                  <select class="form-input" id="pf-gender" style="background:var(--card)">
+                    <option value="">Pilih...</option><option value="L">Laki-laki</option><option value="P">Perempuan</option>
+                  </select>
+                </div>
+                <button class="btn-save" onclick="saveProfile()">💾 Simpan Perubahan</button>
+              </div>
+            </div>
+            <div id="ptab-address" style="display:none">
+              <div class="profile-section-title">Alamat Pengiriman</div>
+              <div class="profile-form">
+                <div class="form-group"><label class="form-label">Nama Penerima</label><input class="form-input" id="addr-name" placeholder="Nama lengkap penerima"></div>
+                <div class="form-group"><label class="form-label">Alamat Lengkap</label><textarea class="form-input" id="addr-street" rows="3" placeholder="Jalan, nomor, RT/RW..." style="resize:vertical"></textarea></div>
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label">Kota</label><input class="form-input" id="addr-city" placeholder="Kota"></div>
+                  <div class="form-group"><label class="form-label">Kode Pos</label><input class="form-input" id="addr-zip" placeholder="12345"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Provinsi</label><input class="form-input" id="addr-province" placeholder="Provinsi"></div>
+                <button class="btn-save" onclick="saveAddress()">💾 Simpan Alamat</button>
+              </div>
+            </div>
+            <div id="ptab-security" style="display:none">
+              <div class="profile-section-title">Ubah Password</div>
+              <div class="profile-form">
+                <div class="form-group"><label class="form-label">Password Baru</label><input class="form-input" type="password" id="sec-new" placeholder="Min. 8 karakter"></div>
+                <div class="form-group"><label class="form-label">Konfirmasi Password</label><input class="form-input" type="password" id="sec-confirm" placeholder="Ulangi password baru"></div>
+                <button class="btn-save" onclick="changePassword()">🔒 Update Password</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="sub-page" id="sub-orders">
+      <div style="max-width:800px;margin:0 auto">
+        <div class="section-title" style="margin-bottom:28px">Pesanan <em>Saya</em></div>
+        <div class="order-list" id="orderList"></div>
+      </div>
+    </div>
+
+    <!-- WISHLIST -->
+    <div class="sub-page" id="sub-wishlist">
+      <div class="section-title" style="margin-bottom:28px">Wishlist <em>Saya</em></div>
+      <div class="wish-grid" id="wishGrid"></div>
+    </div>
+  </main>
+
+  <!-- CART -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-panel" id="cartPanel">
+    <div class="cart-head"><h3>🛒 Keranjang Saya</h3><button class="cart-close" onclick="toggleCart()">✕</button></div>
+    <div class="cart-body" id="cartBody"></div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="cart-total-row"><span class="cart-total-label">Total Pembayaran</span><span class="cart-total-val" id="cartTotalVal">Rp 0</span></div>
+      <button class="checkout-btn" onclick="doCheckout()">Bayar Sekarang →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅</div>
+
+<script>
+// ═══════════ SUPABASE CONFIG ═══════════
+const SUPABASE_URL = 'https://jhloaoorkeazwdkotkzv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobG9hb29ya2Vhendka290a3p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NzEzNzQsImV4cCI6MjA5MzE0NzM3NH0.Yecx5i3oKlv1jJ1VWx1zEjrFdgC6CWzFvrT-fJWc6MM';
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ═══════════ PRODUCTS DATA ═══════════
+const PRODUCTS = [
+  {id:1,emoji:'👗',name:'Dress Floral Elegan',category:'fashion',tag:'new',price:385000,original:500000,rating:4.8,reviews:234,desc:'Bahan premium breathable, nyaman seharian.'},
+  {id:2,emoji:'👟',name:'Sneakers Urban Style',category:'fashion',tag:'hot',price:620000,original:820000,rating:4.9,reviews:512,desc:'Desain modern, sol anti-slip berkualitas.'},
+  {id:3,emoji:'⌚',name:'Jam Tangan Minimalis',category:'aksesoris',tag:'sale',price:450000,original:680000,rating:4.7,reviews:189,desc:'Tahan air 30m, kaca sapphire anti-gores.'},
+  {id:4,emoji:'💄',name:'Lipstik Matte Luxe',category:'kecantikan',tag:'new',price:125000,original:165000,rating:4.9,reviews:876,desc:'12 jam ketahanan, formula lembab.'},
+  {id:5,emoji:'🎧',name:'Earbuds Wireless Pro',category:'elektronik',tag:'hot',price:750000,original:1100000,rating:4.8,reviews:341,desc:'ANC aktif, baterai 30 jam, suara jernih.'},
+  {id:6,emoji:'🌿',name:'Skincare Set Natural',category:'kecantikan',tag:'sale',price:290000,original:420000,rating:4.6,reviews:428,desc:'100% bahan alami, cocok semua kulit.'},
+  {id:7,emoji:'🧥',name:'Jaket Bomber Premium',category:'fashion',tag:'new',price:980000,original:1350000,rating:4.9,reviews:167,desc:'Waterproof, lapisan fleece dalam.'},
+  {id:8,emoji:'💍',name:'Cincin Silver Artisan',category:'aksesoris',tag:'hot',price:225000,original:310000,rating:4.8,reviews:293,desc:'Sterling silver 925, handcrafted.'},
+  {id:9,emoji:'📱',name:'Phone Stand Bamboo',category:'lifestyle',tag:'new',price:89000,original:130000,rating:4.7,reviews:562,desc:'Ramah lingkungan, adjustable 360°.'},
+  {id:10,emoji:'☕',name:'Tumbler Vacuum',category:'lifestyle',tag:'sale',price:195000,original:280000,rating:4.8,reviews:734,desc:'Jaga suhu 24 jam, BPA free.'},
+  {id:11,emoji:'🕶️',name:'Kacamata UV400',category:'aksesoris',tag:'hot',price:310000,original:450000,rating:4.7,reviews:198,desc:'UV400, frame titanium ringan.'},
+  {id:12,emoji:'🧴',name:'Parfum Oud Collection',category:'kecantikan',tag:'new',price:485000,original:650000,rating:4.9,reviews:312,desc:'Tahan 8-10 jam, imported essence.'},
+];
+
+const CATS = ['semua','fashion','aksesoris','kecantikan','elektronik','lifestyle'];
+let currentUser = null;
+let cart = [];
+let wishlist = new Set();
+let currentFilter = 'semua';
+
+// ═══════════ INIT ═══════════
+window.addEventListener('load', async () => {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      await onLoginSuccess();
+    } else {
+      goToPage('page-login');
+    }
+  } catch(e) {
+    goToPage('page-login');
+  }
+  setTimeout(() => {
+    document.getElementById('loading-screen').style.opacity = '0';
+    setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 400);
+  }, 1600);
+});
+
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN' && session) {
+    currentUser = session.user;
+    await onLoginSuccess();
+  } else if (event === 'SIGNED_OUT') {
+    currentUser = null;
+    goToPage('page-login');
+  }
+});
+
+// ═══════════ PAGE ROUTING ═══════════
+function goToPage(id) {
+  document.querySelectorAll('.auth-page, #app-page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+}
+
+function setSubPage(name) {
+  document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('sub-'+name);
+  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+  if (name === 'profile') loadProfileData();
+  if (name === 'orders') loadOrders();
+  if (name === 'wishlist') renderWishlist();
+}
+
+// ═══════════ AUTH ═══════════
+function switchLoginTab(tab, btn) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('login-email-tab').style.display = tab === 'email' ? 'block' : 'none';
+  document.getElementById('login-phone-tab').style.display = tab === 'phone' ? 'block' : 'none';
+}
+
+function setLoading(btnId, loading, text='') {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.innerHTML = loading ? `<span class="spinner"></span>${text}` : btn.dataset.original || text;
+  if (!loading && text) btn.dataset.original = text;
+}
+
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass = document.getElementById('l-pass').value;
+  hideAlert('login-alert');
+
+  if (!email || !pass) { showAlert('login-alert', 'login-alert-msg', 'Email dan password wajib diisi'); return; }
+
+  setLoading('login-btn', true, 'Masuk...');
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  setLoading('login-btn', false, 'Masuk Sekarang');
+
+  if (error) showAlert('login-alert', 'login-alert-msg', 'Email atau password salah');
+}
+
+async function loginGoogle() {
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+}
+
+async function loginPhone() {
+  const phone = document.getElementById('l-phone').value.trim();
+  if (!phone) { showAlert('phone-alert', 'phone-alert-msg', 'Masukkan nomor HP'); return; }
+  const { error } = await sb.auth.signInWithOtp({ phone });
+  if (error) showAlert('phone-alert', 'phone-alert-msg', error.message);
+  else showToast('📱 Kode OTP dikirim! (fitur memerlukan nomor aktif)');
+}
+
+async function doRegister() {
+  const fname = document.getElementById('r-fname').value.trim();
+  const lname = document.getElementById('r-lname').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const pass = document.getElementById('r-pass').value;
+  const pass2 = document.getElementById('r-pass2').value;
+  hideAlert('reg-alert'); hideAlert('reg-success');
+
+  if (!fname || !email || !pass) { showAlert('reg-alert', 'reg-alert-msg', 'Semua field wajib diisi'); return; }
+  if (pass.length < 8) { showAlert('reg-alert', 'reg-alert-msg', 'Password minimal 8 karakter'); return; }
+  if (pass !== pass2) { showAlert('reg-alert', 'reg-alert-msg', 'Konfirmasi password tidak cocok'); return; }
+
+  setLoading('reg-btn', true, 'Mendaftarkan...');
+  const { data, error } = await sb.auth.signUp({
+    email, password: pass,
+    options: { data: { fname, lname, full_name: (fname+' '+lname).trim(), phone: '' } }
+  });
+  setLoading('reg-btn', false, 'Daftar Gratis');
+
+  if (error) { showAlert('reg-alert', 'reg-alert-msg', error.message); return; }
+
+  if (data.user && !data.session) {
+    showAlert('reg-success', 'reg-success-msg', 'Akun dibuat! Cek email kamu untuk verifikasi.');
+  }
+}
+
+async function doForgot() {
+  const email = document.getElementById('f-email').value.trim();
+  if (!email.includes('@')) { showToast('⚠️ Masukkan email yang valid'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+  if (error) showToast('⚠️ ' + error.message);
+  else {
+    showAlert('forgot-success', 'forgot-success-msg', 'Link reset dikirim ke ' + email + '. Cek inbox kamu!');
+  }
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  cart = []; wishlist = new Set();
+  showToast('👋 Sampai jumpa!');
+}
+
+async function onLoginSuccess() {
+  const meta = currentUser.user_metadata || {};
+  const name = meta.full_name || meta.name || meta.fname || currentUser.email.split('@')[0];
+  const initials = name.slice(0,2).toUpperCase();
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('userNameHeader').textContent = (meta.fname || name).split(' ')[0];
+  goToPage('app-page');
+  initFilters();
+  renderProducts('semua');
+  renderCart();
+  await loadUserProfile();
+}
+
+// ═══════════ PROFILE ═══════════
+let userProfile = null;
+
+async function loadUserProfile() {
+  if (!currentUser) return;
+  const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  userProfile = data;
+}
+
+async function loadProfileData() {
+  if (!currentUser) return;
+  await loadUserProfile();
+  const meta = currentUser.user_metadata || {};
+  const p = userProfile || {};
+
+  document.getElementById('profileName').textContent = p.full_name || meta.full_name || currentUser.email;
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  const name = p.full_name || meta.full_name || '?';
+  document.getElementById('profileAvatarBig').innerHTML = name.slice(0,2).toUpperCase() + '<div class="online-dot"></div>';
+
+  document.getElementById('pf-fname').value = p.fname || meta.fname || '';
+  document.getElementById('pf-lname').value = p.lname || meta.lname || '';
+  document.getElementById('pf-email').value = currentUser.email;
+  document.getElementById('pf-phone').value = p.phone || meta.phone || '';
+  document.getElementById('pf-bday').value = p.bday || '';
+  document.getElementById('pf-gender').value = p.gender || '';
+  document.getElementById('addr-name').value = p.addr_name || '';
+  document.getElementById('addr-street').value = p.addr_street || '';
+  document.getElementById('addr-city').value = p.addr_city || '';
+  document.getElementById('addr-zip').value = p.addr_zip || '';
+  document.getElementById('addr-province').value = p.addr_province || '';
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  const fname = document.getElementById('pf-fname').value.trim();
+  const lname = document.getElementById('pf-lname').value.trim();
+  const data = {
+    id: currentUser.id,
+    fname, lname,
+    full_name: (fname+' '+lname).trim(),
+    phone: document.getElementById('pf-phone').value.trim(),
+    bday: document.getElementById('pf-bday').value,
+    gender: document.getElementById('pf-gender').value,
+    updated_at: new Date().toISOString()
+  };
+  const { error } = await sb.from('profiles').upsert(data);
+  if (error) showToast('⚠️ Gagal menyimpan: ' + error.message);
+  else { showToast('✅ Profil berhasil diperbarui!'); await loadUserProfile(); }
+}
+
+async function saveAddress() {
+  if (!currentUser) return;
+  const data = {
+    id: currentUser.id,
+    addr_name: document.getElementById('addr-name').value,
+    addr_street: document.getElementById('addr-street').value,
+    addr_city: document.getElementById('addr-city').value,
+    addr_zip: document.getElementById('addr-zip').value,
+    addr_province: document.getElementById('addr-province').value,
+    updated_at: new Date().toISOString()
+  };
+  const { error } = await sb.from('profiles').upsert(data);
+  if (error) showToast('⚠️ Gagal menyimpan alamat');
+  else showToast('✅ Alamat berhasil disimpan!');
+}
+
+async function changePassword() {
+  const newPass = document.getElementById('sec-new').value;
+  const confirmPass = document.getElementById('sec-confirm').value;
+  if (newPass.length < 8) { showToast('⚠️ Password minimal 8 karakter'); return; }
+  if (newPass !== confirmPass) { showToast('⚠️ Konfirmasi password tidak cocok'); return; }
+  const { error } = await sb.auth.updateUser({ password: newPass });
+  if (error) showToast('⚠️ ' + error.message);
+  else { showToast('🔒 Password berhasil diubah!'); document.getElementById('sec-new').value=''; document.getElementById('sec-confirm').value=''; }
+}
+
+// ═══════════ ORDERS ═══════════
+async function loadOrders() {
+  if (!currentUser) return;
+  const list = document.getElementById('orderList');
+  list.innerHTML = `<div class="no-data"><div class="icon">⏳</div><p>Memuat pesanan...</p></div>`;
+
+  const { data, error } = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+
+  if (error || !data || !data.length) {
+    list.innerHTML = `<div class="no-data"><div class="icon">📦</div><p>Belum ada pesanan.<br>Yuk belanja sekarang!</p></div>`;
+    return;
+  }
+
+  const statusLabel = { delivered:'Terkirim', processing:'Diproses', cancelled:'Dibatalkan' };
+  const statusClass = { delivered:'s-delivered', processing:'s-processing', cancelled:'s-cancelled' };
+
+  list.innerHTML = data.map(o => {
+    const items = JSON.parse(o.items || '[]');
+    const date = new Date(o.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+    return `
+      <div class="order-item">
+        <div class="order-top">
+          <span class="order-id">#${o.id.slice(-8).toUpperCase()} · ${date}</span>
+          <span class="order-status ${statusClass[o.status]||'s-processing'}">${statusLabel[o.status]||'Diproses'}</span>
+        </div>
+        <div class="order-emojis">${items.map(i=>`<div class="order-emoji" title="${i.name}">${i.emoji}</div>`).join('')}</div>
+        <div class="order-bottom">
+          <span class="order-total">Total: <strong>Rp ${Number(o.total).toLocaleString('id-ID')}</strong></span>
+          <button class="filter-btn" onclick="showToast('📦 Pesanan sedang diproses!')">Lacak</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ═══════════ CART ═══════════
+function addToCart(product) {
+  const ex = cart.find(i => i.id === product.id);
+  if (ex) ex.qty++; else cart.push({...product, qty:1});
+  renderCart();
+  showToast(`${product.emoji} ${product.name} ditambahkan!`);
+  const btn = document.getElementById('abtn-'+product.id);
+  if (btn) { btn.classList.add('added'); btn.textContent='✓'; setTimeout(()=>{btn.classList.remove('added');btn.textContent='+'},1400); }
+}
+
+function renderCart() {
+  const count = cart.reduce((a,b)=>a+b.qty,0);
+  document.getElementById('cartBadge').textContent = count;
+  const body = document.getElementById('cartBody');
+  const foot = document.getElementById('cartFoot');
+  if (!cart.length) {
+    body.innerHTML=`<div class="cart-empty"><div class="icon">🛒</div><p>Keranjangmu kosong.<br>Yuk mulai belanja!</p></div>`;
+    foot.style.display='none'; return;
+  }
+  foot.style.display='block';
+  body.innerHTML = cart.map((item,i)=>`
+    <div class="cart-item">
+      <div class="ci-emoji">${item.emoji}</div>
+      <div class="ci-details">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+          <span class="qty-n">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+        </div>
+      </div>
+      <button class="ci-remove" onclick="removeItem(${i})">✕</button>
+    </div>`).join('');
+  const total = cart.reduce((a,b)=>a+b.price*b.qty,0);
+  document.getElementById('cartTotalVal').textContent = 'Rp '+total.toLocaleString('id-ID');
+}
+
+function changeQty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);renderCart()}
+function removeItem(i){cart.splice(i,1);renderCart()}
+function toggleCart(){document.getElementById('cartPanel').classList.toggle('open');document.getElementById('cartOverlay').classList.toggle('open')}
+
+async function doCheckout() {
+  if (!cart.length || !currentUser) return;
+  const total = cart.reduce((a,b)=>a+b.price*b.qty,0);
+  const { error } = await sb.from('orders').insert({
+    user_id: currentUser.id,
+    items: JSON.stringify(cart.map(c=>({emoji:c.emoji,name:c.name,price:c.price,qty:c.qty}))),
+    total, status: 'processing'
+  });
+  if (error) { showToast('⚠️ Gagal checkout: '+error.message); return; }
+  cart=[]; renderCart(); toggleCart();
+  showToast('🎉 Pesanan berhasil! Cek menu Pesanan Saya.');
+}
+
+// ═══════════ WISHLIST ═══════════
+function toggleWish(id) {
+  if (wishlist.has(id)) wishlist.delete(id); else wishlist.add(id);
+  const btn = document.getElementById('wish-'+id);
+  if (btn) { btn.classList.toggle('liked'); btn.textContent = wishlist.has(id)?'♥':'♡'; }
+}
+
+function renderWishlist() {
+  const grid = document.getElementById('wishGrid');
+  const items = PRODUCTS.filter(p=>wishlist.has(p.id));
+  if (!items.length) {
+    grid.innerHTML=`<div style="text-align:center;color:var(--muted);padding:60px;grid-column:1/-1"><div style="font-size:3.5rem;margin-bottom:12px;opacity:0.4">❤️</div><p>Belum ada produk di wishlist.</p></div>`;
+    return;
+  }
+  grid.innerHTML = items.map(p=>`
+    <div class="wish-item" onclick="addToCart({id:${p.id},emoji:'${p.emoji}',name:'${p.name}',price:${p.price},category:'${p.category}'})">
+      <div class="wish-img">${p.emoji}</div>
+      <div class="wish-info"><div class="wish-name">${p.name}</div><div class="wish-price">Rp ${p.price.toLocaleString('id-ID')}</div></div>
+    </div>`).join('');
+}
+
+// ═══════════ PRODUCTS ═══════════
+function initFilters() {
+  const labels={semua:'Semua',fashion:'Fashion',aksesoris:'Aksesoris',kecantikan:'Kecantikan',elektronik:'Elektronik',lifestyle:'Lifestyle'};
+  document.getElementById('filterBtns').innerHTML = CATS.map(c=>
+    `<button class="filter-btn ${c==='semua'?'active':''}" onclick="filterP('${c}',this)">${labels[c]}</button>`).join('');
+}
+
+function filterP(cat,btn) {
+  currentFilter=cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat);
+}
+
+function renderProducts(filter) {
+  const grid = document.getElementById('productsGrid');
+  const list = filter==='semua' ? PRODUCTS : PRODUCTS.filter(p=>p.category===filter);
+  grid.innerHTML = list.map((p,i)=>`
+    <div class="product-card" style="animation-delay:${i*0.06}s">
+      ${p.tag?`<div class="product-badge badge-${p.tag}">${p.tag==='new'?'✦ BARU':p.tag==='hot'?'🔥 HOT':'🏷️ SALE'}</div>`:''}
+      <button class="product-wish ${wishlist.has(p.id)?'liked':''}" id="wish-${p.id}" onclick="toggleWish(${p.id})">${wishlist.has(p.id)?'♥':'♡'}</button>
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-info">
+        <div class="product-cat">${p.category}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-rating"><span class="stars">${'★'.repeat(Math.floor(p.rating))}</span>&nbsp;${p.rating} (${p.reviews})</div>
+        <div class="product-footer">
+          <div class="price-wrap">
+            ${p.original?`<span class="price-old">Rp ${p.original.toLocaleString('id-ID')}</span>`:''}
+            <span class="price-now">Rp ${p.price.toLocaleString('id-ID')}</span>
+          </div>
+          <button class="add-btn" id="abtn-${p.id}" onclick="addToCart({id:${p.id},emoji:'${p.emoji}',name:'${p.name}',price:${p.price},category:'${p.category}'})">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════ HELPERS ═══════════
+function toggleDropdown(){document.getElementById('userDropdown').classList.toggle('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('.user-menu'))document.getElementById('userDropdown')?.classList.remove('open')});
+
+function showPTab(tab, el) {
+  document.querySelectorAll('.pnav-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  ['info','address','security'].forEach(t=>{
+    const e=document.getElementById('ptab-'+t);
+    if(e) e.style.display=t===tab?'block':'none';
+  });
+}
+
+function togglePw(id,btn){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';btn.textContent=i.type==='password'?'👁️':'🙈'}
+
+function showAlert(alertId, msgId, msg) {
+  const a=document.getElementById(alertId);const m=document.getElementById(msgId);
+  if(a&&m){m.textContent=msg;a.classList.add('show')}
+}
+function hideAlert(id){const a=document.getElementById(id);if(a)a.classList.remove('show')}
+
+function checkStrength(pass) {
+  const wrap=document.getElementById('strength-wrap');const bar=document.getElementById('strength-bar');const text=document.getElementById('strength-text');
+  if(!pass){wrap.style.display='none';return}
+  wrap.style.display='block';
+  let s=0;if(pass.length>=8)s++;if(/[A-Z]/.test(pass))s++;if(/[0-9]/.test(pass))s++;if(/[^A-Za-z0-9]/.test(pass))s++;
+  const c=['','#e85d75','#c9a96e','#5b8dee','#4caf8a'];const l=['','Lemah','Cukup','Kuat','Sangat Kuat'];
+  bar.style.width=(s*25)+'%';bar.style.background=c[s];text.textContent=l[s];text.style.color=c[s];
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+</script>
+</body>
+</html>
