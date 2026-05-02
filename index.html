@@ -838,22 +838,12 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:2px;backgroun
     </div>
     <button class="ai-close-btn" onclick="toggleAIPanel()">✕</button>
   </div>
-  <!-- API Key Setup -->
-  <div id="aiKeySetup" style="padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(251,191,36,0.05);display:none">
-    <div style="font-size:0.72rem;color:var(--yellow);font-weight:700;letter-spacing:0.08em;margin-bottom:8px;text-transform:uppercase">⚠️ Masukkan Google Gemini API Key</div>
-    <div style="display:flex;gap:8px">
-      <input id="aiKeyInput" type="password" placeholder="AIza..." style="flex:1;background:var(--bg);border:1.5px solid rgba(251,191,36,0.3);border-radius:8px;color:var(--white);font-size:0.8rem;padding:8px 12px;outline:none;font-family:var(--font)" onkeydown="if(event.key==='Enter')saveAIKey()">
-      <button onclick="saveAIKey()" style="background:var(--yellow);color:#000;border:none;border-radius:8px;padding:8px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap">Simpan</button>
-    </div>
-    <div style="font-size:0.68rem;color:var(--muted);margin-top:6px">🆓 Gratis! Daftar di <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--cyan)">aistudio.google.com/apikey</a></div>
-  </div>
   <div class="ai-messages" id="aiMessages"></div>
   <div class="ai-quick-btns" id="aiQuickBtns">
     <button class="ai-quick-btn" onclick="sendQuick('Rekomendasikan top up untuk Mobile Legends 🎮')">ML Diamond</button>
     <button class="ai-quick-btn" onclick="sendQuick('Produk terlaris di JAK STORE apa?')">Terlaris</button>
     <button class="ai-quick-btn" onclick="sendQuick('Top up apa yang paling hemat dengan budget Rp 50.000?')">Budget 50K</button>
     <button class="ai-quick-btn" onclick="sendQuick('Bedanya ML Diamond 86, 172, dan 257 apa?')">Bandingkan</button>
-    <button class="ai-quick-btn" onclick="resetAIKey()" style="border-color:rgba(244,63,94,0.3);color:var(--accent)">🔑 Ganti Key</button>
   </div>
   <div class="ai-input-row">
     <input class="ai-input" id="aiInput" placeholder="Tanya AI soal top up game..." onkeydown="if(event.key==='Enter')sendAIMsg()">
@@ -1270,11 +1260,210 @@ function showToast(msg){
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
 }
 
-// ═══════════ AI SARAN ASSISTANT ═══════════
+// ═══════════ JAK AI — BUILT-IN (NO API KEY NEEDED) ═══════════
 let aiPanelOpen = false;
 let aiIsTyping = false;
 let aiHistory = [];
-let aiApiKey = localStorage.getItem('jak_gemini_key') || '';
+
+// ── Database produk untuk AI ──
+const AI_PRODUCTS = [
+  {id:1, name:'ML Diamond 86',  game:'mobile legends', price:19000, amount:86,  unit:'diamond', tag:'hot',  hemat:24},
+  {id:2, name:'ML Diamond 172', game:'mobile legends', price:35000, amount:172, unit:'diamond', tag:'sale', hemat:27},
+  {id:3, name:'ML Diamond 257', game:'mobile legends', price:50000, amount:257, unit:'diamond', tag:'new',  hemat:23},
+  {id:4, name:'FF Diamond 100', game:'free fire',      price:14000, amount:100, unit:'diamond', tag:'hot',  hemat:22},
+  {id:5, name:'FF Diamond 520', game:'free fire',      price:70000, amount:520, unit:'diamond', tag:'sale', hemat:26},
+  {id:6, name:'PUBG UC 60',     game:'pubg',           price:18000, amount:60,  unit:'uc',      tag:'new',  hemat:22},
+  {id:7, name:'PUBG UC 300',    game:'pubg',           price:85000, amount:300, unit:'uc',      tag:'hot',  hemat:26},
+  {id:8, name:'Genshin Genesis 60',  game:'genshin',   price:16000, amount:60,  unit:'crystal', tag:'new',  hemat:24},
+  {id:9, name:'Genshin Genesis 300', game:'genshin',   price:78000, amount:300, unit:'crystal', tag:'hot',  hemat:26},
+  {id:10,name:'Valorant VP 475',game:'valorant',       price:70000, amount:475, unit:'vp',      tag:'new',  hemat:22},
+  {id:11,name:'Valorant VP 1000',game:'valorant',      price:140000,amount:1000,unit:'vp',      tag:'sale', hemat:24},
+  {id:12,name:'Steam Wallet 100K',game:'steam',        price:100000,amount:100000,unit:'rupiah',tag:'hot',  hemat:13},
+];
+
+// ── Cek apakah pesan mengandung kata kunci ──
+function aiContains(msg, words){ return words.some(w => msg.includes(w)); }
+
+// ── Engine otak AI ──
+function jakAIReply(msg) {
+  const m = msg.toLowerCase();
+
+  // ── SALAM / SAPAAN ──
+  if(aiContains(m,['halo','hai','hi','hello','hei','hey','apa kabar','selamat'])){
+    const sapaan = ['Halo kak! 👋 Aku JAK AI, siap bantu pilih top up game terbaik buat kamu! Mau top up game apa nih? 🎮','Hai kak! 😄 Ada yang bisa aku bantu? Mau cari top up game murah dan worth it? Tanya aja!','Helo kak! ⚡ Aku siap rekomendasiin top up terbaik buat kamu. Game apa yang lagi kamu mainin? 🕹️'];
+    return sapaan[Math.floor(Math.random()*sapaan.length)];
+  }
+
+  // ── TERIMA KASIH ──
+  if(aiContains(m,['makasih','thanks','thank','terima kasih','thx'])){
+    return 'Sama-sama kak! 😊 Kalau butuh bantuan lagi, tanya aja ya. Selamat top up! ⚡🎮';
+  }
+
+  // ── BUDGET ──
+  const budgetMatch = m.match(/(\d[\d.]*)\s*(k|rb|ribu|juta)?/);
+  if(aiContains(m,['budget','duit','uang','modal','punya','ada']) && budgetMatch){
+    let budget = parseInt(budgetMatch[1].replace(/\./g,''));
+    if(m.includes('juta')) budget *= 1000000;
+    else if(aiContains(m,['k','rb','ribu'])) budget *= 1000;
+    const cocok = AI_PRODUCTS.filter(p => p.price <= budget).sort((a,b) => b.price - a.price);
+    if(!cocok.length) return `Waduh budget Rp ${budget.toLocaleString('id-ID')} masih kurang nih kak 😅 Produk termurah kita FF Diamond 100 = **Rp 14.000**. Coba tambah dikit ya kak!`;
+    const top = cocok.slice(0,3);
+    let resp = `💰 Dengan budget **Rp ${budget.toLocaleString('id-ID')}**, aku rekomendasiin ini kak:\n\n`;
+    top.forEach((p,i) => { resp += `${i===0?'🥇':i===1?'🥈':'🥉'} **${p.name}** — Rp ${p.price.toLocaleString('id-ID')} (hemat ${p.hemat}%)\n`; });
+    resp += `\nPaling worth it: **${top[0].name}**! Klik tombol + di halaman produk ya kak 🛒`;
+    return resp;
+  }
+
+  // ── TERMURAH / PALING MURAH ──
+  if(aiContains(m,['murah','termurah','paling murah','hemat','terjangkau','budget'])){
+    const sorted = [...AI_PRODUCTS].sort((a,b)=>a.price-b.price).slice(0,3);
+    return `🏷️ Ini produk **paling murah** di JAK STORE kak:\n\n🥇 **${sorted[0].name}** — Rp ${sorted[0].price.toLocaleString('id-ID')}\n🥈 **${sorted[1].name}** — Rp ${sorted[1].price.toLocaleString('id-ID')}\n🥉 **${sorted[2].name}** — Rp ${sorted[2].price.toLocaleString('id-ID')}\n\nSemuanya proses instan dan 100% aman kak! ⚡`;
+  }
+
+  // ── TERLARIS / POPULER ──
+  if(aiContains(m,['terlaris','populer','laris','banyak dibeli','recommended','rekomen','bagus'])){
+    return `🔥 Produk **terlaris** di JAK STORE:\n\n🥇 **ML Diamond 86** — Rp 19.000 (8.421 terjual)\n🥈 **Genshin Genesis 60** — Rp 16.000 (9.821 terjual)\n🥉 **FF Diamond 100** — Rp 14.000 (7.890 terjual)\n\nKetiganya best seller kak, proses langsung masuk ke akun! 🎮`;
+  }
+
+  // ── DISKON / PROMO ──
+  if(aiContains(m,['diskon','promo','sale','hemat','potongan','murah'])){
+    const bestDeal = [...AI_PRODUCTS].sort((a,b)=>b.hemat-a.hemat).slice(0,3);
+    return `🏷️ Produk dengan **diskon terbesar** kak:\n\n🥇 **${bestDeal[0].name}** — hemat ${bestDeal[0].hemat}%!\n🥈 **${bestDeal[1].name}** — hemat ${bestDeal[1].hemat}%!\n🥉 **${bestDeal[2].name}** — hemat ${bestDeal[2].hemat}%!\n\nSemua harga sudah termurah, langsung klik + buat top up kak! ⚡`;
+  }
+
+  // ── MOBILE LEGENDS ──
+  if(aiContains(m,['ml','mobile legends','mlbb','diamond ml','ml diamond'])){
+    if(aiContains(m,['beda','bedanya','perbandingan','compare','vs','pilih mana','mana yang'])){
+      return `💎 Perbandingan **ML Diamond** kak:\n\n• **86 Diamond** = Rp 19.000 → cocok buat beli skin murah\n• **172 Diamond** = Rp 35.000 → hemat 27%, paling worth it!\n• **257 Diamond** = Rp 50.000 → ada bonus event, buat beli hero/skin premium\n\nKalau mau paling hemat, pilih **172 Diamond** kak! 🎯`;
+    }
+    return `💎 Untuk **Mobile Legends**, JAK STORE punya 3 pilihan kak:\n\n• **ML Diamond 86** = Rp 19.000 (hemat 24%)\n• **ML Diamond 172** = Rp 35.000 (hemat 27%) ⭐ Terpopuler!\n• **ML Diamond 257** = Rp 50.000 (hemat 23% + bonus event)\n\nMau yang mana kak? Langsung klik + aja buat top up! 🛒`;
+  }
+
+  // ── FREE FIRE ──
+  if(aiContains(m,['ff','free fire','freefire','diamond ff','ff diamond'])){
+    return `🔥 Untuk **Free Fire**, ada 2 pilihan kak:\n\n• **FF Diamond 100** = Rp 14.000 (hemat 22%) → buat beli item kecil\n• **FF Diamond 520** = Rp 70.000 (hemat 26%) ⭐ Best value!\n\nKalau mau paling hemat per diamond, pilih yang 520 kak! Proses instan langsung masuk akun ⚡`;
+  }
+
+  // ── PUBG ──
+  if(aiContains(m,['pubg','uc','unknown cash','battlegrounds'])){
+    return `🎯 Untuk **PUBG Mobile**, ada 2 pilihan kak:\n\n• **PUBG UC 60** = Rp 18.000 (hemat 22%)\n• **PUBG UC 300** = Rp 85.000 (hemat 26% + 25 UC Bonus!) ⭐\n\nYang 300 UC lebih worth it kak karena ada bonus UC-nya! Langsung klik + ya 🛒`;
+  }
+
+  // ── GENSHIN ──
+  if(aiContains(m,['genshin','genesis','crystal','genshin impact'])){
+    return `🌸 Untuk **Genshin Impact**, ada 2 pilihan kak:\n\n• **Genesis 60** = Rp 16.000 (hemat 24%) → buat pull sekali\n• **Genesis 300** = Rp 78.000 (hemat 26% + 30 Bonus Crystal!) ⭐\n\nYang 300 jauh lebih worth it kak karena ada bonus crystal extra! 💎`;
+  }
+
+  // ── VALORANT ──
+  if(aiContains(m,['valorant','vp','valorant points'])){
+    return `⚔️ Untuk **Valorant**, ada 2 pilihan kak:\n\n• **VP 475** = Rp 70.000 (hemat 22%) → buat beli card/spray\n• **VP 1000** = Rp 140.000 (hemat 24%) ⭐ → buat beli skin senjata\n\nMau skin? Ambil yang 1000 VP kak, lebih worth it! 🎯`;
+  }
+
+  // ── STEAM ──
+  if(aiContains(m,['steam','wallet','steam wallet'])){
+    return `🎮 **Steam Wallet 100K** = Rp 100.000 kak!\n\nIni gift card Steam resmi, bisa buat beli game, DLC, atau item di Steam Market. Proses cepat, langsung bisa dipakai! ⚡\n\nMau langsung top up? Klik tombol + di halaman produk ya kak 🛒`;
+  }
+
+  // ── CARA TOP UP / PROSES ──
+  if(aiContains(m,['cara','gimana','bagaimana','caranya','proses','langkah','steps'])){
+    return `⚡ Cara top up di JAK STORE gampang banget kak:\n\n1️⃣ Pilih produk → klik **+** (tambah ke keranjang)\n2️⃣ Klik **Keranjang** di atas\n3️⃣ Klik **BAYAR SEKARANG**\n4️⃣ Selesai! Diamond/item langsung masuk ke akun kamu\n\nProses instan, max 10 detik setelah pembayaran! 🚀`;
+  }
+
+  // ── AMAN / TERPERCAYA ──
+  if(aiContains(m,['aman','scam','tipu','terpercaya','legit','asli','original'])){
+    return `🛡️ JAK STORE **100% aman dan terpercaya** kak!\n\n✅ 500.000+ transaksi sukses\n✅ Success rate 99.9%\n✅ Proses instan otomatis\n✅ CS siap bantu 24/7\n\nUdah banyak yang top up di sini dan aman semua kak! Dijamin! 💪`;
+  }
+
+  // ── SEMUA PRODUK / DAFTAR ──
+  if(aiContains(m,['semua','list','daftar','ada apa','produk apa','game apa'])){
+    return `🎮 **Semua produk di JAK STORE:**\n\n💎 Mobile Legends Diamond (86, 172, 257)\n🔥 Free Fire Diamond (100, 520)\n🎯 PUBG UC (60, 300)\n🌸 Genshin Genesis Crystal (60, 300)\n⚔️ Valorant VP (475, 1000)\n🖥️ Steam Wallet (100K)\n\nTotal **12 produk** semua dengan harga terbaik! Mau tanya yang mana? 😊`;
+  }
+
+  // ── PERBANDINGAN GAME ──
+  if(aiContains(m,['game apa','game mana','pilih game','rekomendasiin game','game bagus'])){
+    return `🎮 Rekomendasi game populer yang bisa top up di JAK STORE kak:\n\n🥇 **Mobile Legends** — paling populer di Indonesia!\n🥈 **Free Fire** — harga diamond paling murah mulai 14K\n🥉 **Genshin Impact** — rating tertinggi di toko kita!\n\nKamu main game apa kak? Aku bisa rekomendasiin paket terbaik! 😊`;
+  }
+
+  // ── DEFAULT — tidak ngerti ──
+  const defaultReplies = [
+    '🤔 Hmm, aku kurang ngerti kak. Coba tanya soal:\n\n• Budget top up kamu berapa?\n• Game apa yang mau di-top up?\n• Mau lihat produk terlaris?\n\nAku siap bantu! 😊',
+    '😅 Maaf kak, aku belum ngerti pertanyaannya. Coba tanya misalnya:\n\n• "Budget 50 ribu top up apa?"\n• "Rekomendasiin ML diamond dong"\n• "Produk paling murah apa?"\n\nAku pasti bisa bantu! 🎮',
+    '🎮 Hei kak! Aku spesialis rekomendasi top up nih. Tanya aja soal budget, game, atau produk yang mau kamu beli. Aku siap bantu pilihkan yang terbaik! ⚡'
+  ];
+  return defaultReplies[Math.floor(Math.random()*defaultReplies.length)];
+}
+
+function toggleAIPanel(){
+  aiPanelOpen = !aiPanelOpen;
+  document.getElementById('ai-panel').classList.toggle('open', aiPanelOpen);
+  document.getElementById('aiNotifDot').style.display = 'none';
+  if(aiPanelOpen){
+    if(aiHistory.length === 0){
+      setTimeout(()=>addAIMessage('bot','👋 Halo Gamer! Aku **JAK AI**, asisten top up kamu di JAK STORE.\n\nTanya aja soal game, budget, atau produk — aku siap bantu 24/7 tanpa loading! 🎮⚡'),400);
+    }
+    setTimeout(()=>document.getElementById('aiInput').focus(), 350);
+  }
+}
+
+function addAIMessage(role, text){
+  const wrap = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = `ai-msg ${role}`;
+  const formattedText = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  div.innerHTML = `<div class="ai-msg-avatar">${role==='bot'?'🤖':'👤'}</div><div class="ai-msg-bubble">${formattedText}</div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function showAITyping(){
+  const wrap = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg bot';
+  div.id = 'ai-typing-indicator';
+  div.innerHTML = `<div class="ai-msg-avatar">🤖</div><div class="ai-typing"><span></span><span></span><span></span></div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function hideAITyping(){
+  const el = document.getElementById('ai-typing-indicator');
+  if(el) el.remove();
+}
+
+async function sendAIMsg(){
+  const input = document.getElementById('aiInput');
+  const msg = input.value.trim();
+  if(!msg || aiIsTyping) return;
+  input.value = '';
+  sendToAI(msg);
+}
+
+function sendQuick(msg){
+  if(aiIsTyping) return;
+  if(!aiPanelOpen) toggleAIPanel();
+  setTimeout(()=>sendToAI(msg), aiPanelOpen ? 0 : 500);
+}
+
+function sendToAI(userMsg){
+  if(aiIsTyping) return;
+  aiIsTyping = true;
+  document.getElementById('aiSendBtn').disabled = true;
+  document.getElementById('aiQuickBtns').style.display = 'none';
+  addAIMessage('user', userMsg);
+  showAITyping();
+  // Simulasi "thinking" 0.6 detik biar keliatan natural
+  setTimeout(()=>{
+    hideAITyping();
+    const reply = jakAIReply(userMsg);
+    addAIMessage('bot', reply);
+    aiIsTyping = false;
+    document.getElementById('aiSendBtn').disabled = false;
+    document.getElementById('aiQuickBtns').style.display = 'flex';
+  }, 600 + Math.random()*400);
+}
+
+// ════════════════════════════════════
+
 
 async function saveAIKey(){
   const val = document.getElementById('aiKeyInput').value.trim();
@@ -1419,7 +1608,7 @@ async function sendToAI(userMsg){
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${aiApiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=${aiApiKey}`,
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -1435,7 +1624,14 @@ async function sendToAI(userMsg){
       hideAITyping();
       let errMsg;
       if(data.error.status === 'RESOURCE_EXHAUSTED'){
-        errMsg = '⏳ Terlalu banyak request! Tunggu 30 detik lalu coba lagi ya kak 🙏';
+        errMsg = '⏳ Rate limit! Otomatis coba lagi dalam 15 detik...';
+        addAIMessage('bot', errMsg);
+        hideAITyping();
+        aiIsTyping = false;
+        document.getElementById('aiSendBtn').disabled = false;
+        document.getElementById('aiQuickBtns').style.display = 'flex';
+        setTimeout(()=>sendToAI(userMsg), 15000);
+        return;
       } else if(data.error.code === 400 || data.error.code === 403){
         errMsg = '❌ API key tidak valid kak. Klik 🔑 Ganti Key ya!';
         aiApiKey=''; localStorage.removeItem('jak_gemini_key');
