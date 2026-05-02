@@ -1398,8 +1398,9 @@ function toggleAIPanel(){
   document.getElementById('ai-panel').classList.toggle('open', aiPanelOpen);
   document.getElementById('aiNotifDot').style.display = 'none';
   if(aiPanelOpen){
-    if(aiHistory.length === 0){
-      setTimeout(()=>addAIMessage('bot','👋 Halo Gamer! Aku **JAK AI**, asisten top up kamu di JAK STORE.\n\nTanya aja soal game, budget, atau produk — aku siap bantu 24/7 tanpa loading! 🎮⚡'),400);
+    const wrap = document.getElementById('aiMessages');
+    if(wrap.children.length === 0){
+      addAIMessage('bot','👋 Halo Gamer! Aku **JAK AI**, asisten top up kamu di JAK STORE.\n\nTanya aja soal game, budget, atau produk — aku siap bantu 24/7 tanpa loading! 🎮⚡');
     }
     setTimeout(()=>document.getElementById('aiInput').focus(), 350);
   }
