@@ -853,6 +853,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:2px;backgroun
     <button class="ai-quick-btn" onclick="sendQuick('Produk terlaris di JAK STORE apa?')">Terlaris</button>
     <button class="ai-quick-btn" onclick="sendQuick('Top up apa yang paling hemat dengan budget Rp 50.000?')">Budget 50K</button>
     <button class="ai-quick-btn" onclick="sendQuick('Bedanya ML Diamond 86, 172, dan 257 apa?')">Bandingkan</button>
+    <button class="ai-quick-btn" onclick="resetAIKey()" style="border-color:rgba(244,63,94,0.3);color:var(--accent)">🔑 Ganti Key</button>
   </div>
   <div class="ai-input-row">
     <input class="ai-input" id="aiInput" placeholder="Tanya AI soal top up game..." onkeydown="if(event.key==='Enter')sendAIMsg()">
@@ -1310,6 +1311,15 @@ function checkAIKey(){
   document.getElementById('aiHeadStatus').textContent = 'Online · Siap bantu kamu';
   document.getElementById('aiHeadStatus').style.color = 'var(--green)';
   return true;
+}
+
+async function resetAIKey(){
+  aiApiKey = '';
+  localStorage.removeItem('jak_gemini_key');
+  if(currentUser) await sb.from('profiles').upsert({id: currentUser.id, gemini_key: null},{onConflict:'id'});
+  document.getElementById('aiKeyInput').value = '';
+  checkAIKey();
+  addAIMessage('bot','🔑 API key dihapus. Silakan masukkan key baru di atas ya kak!');
 }
 
 const AI_SYSTEM_PROMPT = `Kamu adalah JAK AI, asisten belanja cerdas dari JAK STORE – platform top up game terkemuka di Indonesia.
