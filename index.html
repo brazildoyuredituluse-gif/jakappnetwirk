@@ -1419,29 +1419,32 @@ async function sendToAI(userMsg){
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${aiApiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${aiApiKey}`,
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           system_instruction: {parts:[{text: AI_SYSTEM_PROMPT}]},
-          contents: aiHistory
+          contents: aiHistory,
+          generationConfig: {maxOutputTokens: 500}
         })
       }
     );
     const data = await response.json();
     if(data.error){
       hideAITyping();
-      const errMsg = data.error.status === 'INVALID_ARGUMENT' || data.error.code === 400
-        ? '❌ API key salah atau tidak valid kak. Cek lagi ya! 🔑'
-        : '⚠️ Error: ' + data.error.message;
-      addAIMessage('bot', errMsg);
-      if(data.error.code === 400 || data.error.code === 403){
-        aiApiKey='';
-        localStorage.removeItem('jak_gemini_key');
-        if(currentUser) await sb.from('profiles').upsert({id: currentUser.id, gemini_key: null},{onConflict:'id'});
+      let errMsg;
+      if(data.error.status === 'RESOURCE_EXHAUSTED'){
+        errMsg = '⏳ Terlalu banyak request! Tunggu 30 detik lalu coba lagi ya kak 🙏';
+      } else if(data.error.code === 400 || data.error.code === 403){
+        errMsg = '❌ API key tidak valid kak. Klik 🔑 Ganti Key ya!';
+        aiApiKey=''; localStorage.removeItem('jak_gemini_key');
+        if(currentUser) await sb.from('profiles').upsert({id:currentUser.id, gemini_key:null},{onConflict:'id'});
         checkAIKey();
+      } else {
+        errMsg = '⚠️ Error: ' + data.error.message;
       }
+      addAIMessage('bot', errMsg);
     } else {
       const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Maaf, ada gangguan sebentar. Coba lagi ya kak! 🙏';
       hideAITyping();
